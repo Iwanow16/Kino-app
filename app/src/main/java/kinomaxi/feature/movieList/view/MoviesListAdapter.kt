@@ -4,6 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.DiffUtil.DiffResult
 import androidx.recyclerview.widget.RecyclerView
 import kinomaxi.databinding.ItemMovieBinding
 
@@ -20,7 +22,10 @@ class MoviesListAdapter(
     fun setItems(items: List<MovieViewData>) {
         this.items.clear()
         this.items.addAll(items)
-        notifyDataSetChanged()
+
+        val difCallback = MovieDiffUtilCallback(items, items)
+        val diffMovie = DiffUtil.calculateDiff(difCallback)
+        diffMovie.dispatchUpdatesTo(this)
     }
 
     override fun getItemCount(): Int = items.size
