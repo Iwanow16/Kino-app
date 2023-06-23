@@ -129,7 +129,7 @@ class MovieDetailsFragment : Fragment() {
     }
 
     private fun FragmentMovieDetailsBinding.showMovieImages(movieImages: List<MovieImage>) {
-        (movieImagesView.adapter as? MovieImagesAdapter)?.setItems(movieImages)
+        (movieImagesView.adapter as? MovieImagesAdapter)?.submitList(movieImages)
     }
 
     companion object {

@@ -107,7 +107,7 @@ class MainPageFragment : Fragment() {
 
     private fun LayoutMoviesListBinding.showMoviesList(moviesList: MoviesList) {
         moviesListTitle.setText(moviesList.type.titleResId)
-        (moviesListSlider.adapter as? MoviesListAdapter)?.setItems(
+        (moviesListSlider.adapter as? MoviesListAdapter)?.submitList(
             moviesList.movies.map(Movie::toViewData)
         )
     }
