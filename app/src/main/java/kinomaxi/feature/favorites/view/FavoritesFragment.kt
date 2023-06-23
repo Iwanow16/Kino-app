@@ -7,11 +7,14 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kinomaxi.R
 import kinomaxi.databinding.FragmentFavoritesBinding
 import kinomaxi.feature.movieDetails.view.MovieDetailsFragment
+import kinomaxi.feature.movieList.model.Banner
 import kinomaxi.feature.movieList.model.Movie
-import kinomaxi.feature.movieList.view.MovieViewData
+import kinomaxi.feature.movieList.view.MovieListItem
 import kinomaxi.feature.movieList.view.MoviesListAdapter
 import kinomaxi.navigateTo
 import kinomaxi.setSubtitle
@@ -48,27 +51,39 @@ class FavoritesFragment : Fragment() {
 
         with(viewBinding) {
             moviesListView.adapter = MoviesListAdapter(::onMovieClick, isFavoritesList = true)
+            moviesListView.layoutManager = GridLayoutManager(requireContext(), 2).apply {
+//                spanSizeLookup =
+            }
         }
 
-        showFavorites(viewModel.favoriteMovies)
+        showItems(viewModel.favoriteMovies, viewModel.banners)
     }
 
     private fun onMovieClick(movieId: Long) {
         navigateTo(MovieDetailsFragment.getInstance(movieId))
     }
 
-    private fun showFavorites(favoriteMovies: List<Movie>) {
+    private fun showItems(favoriteMovies: List<Movie>, banners: List<Banner>) {
         with(viewBinding) {
+            val items: List<MovieListItem> =
+                favoriteMovies.map(Movie::toViewData) + banners.map(Banner::toViewData)
             moviesListView.isVisible = favoriteMovies.isNotEmpty()
             emptyDataView.isVisible = favoriteMovies.isEmpty()
-            (moviesListView.adapter as? MoviesListAdapter)?.submitList(
-                favoriteMovies.map(Movie::toViewData)
-            )
+            (moviesListView.adapter as? MoviesListAdapter)?.submitList(items)
         }
     }
 }
 
-private fun Movie.toViewData() = MovieViewData(
-    id = id,
-    posterUrl = posterUrl,
-)
+private fun Movie.toViewData() =
+    MovieListItem.Movie(id, posterUrl)
+
+private fun Banner.toViewData() =
+    MovieListItem.Banner(text)
+
+
+
+
+
+
+
+

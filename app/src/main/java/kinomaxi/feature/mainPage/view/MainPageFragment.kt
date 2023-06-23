@@ -17,7 +17,7 @@ import kinomaxi.feature.movieDetails.view.MovieDetailsFragment
 import kinomaxi.feature.movieList.model.Movie
 import kinomaxi.feature.movieList.model.MoviesList
 import kinomaxi.feature.movieList.model.MoviesListType
-import kinomaxi.feature.movieList.view.MovieViewData
+import kinomaxi.feature.movieList.view.MovieListItem
 import kinomaxi.feature.movieList.view.MoviesListAdapter
 import kinomaxi.navigateTo
 import kinomaxi.setSubtitle
@@ -121,7 +121,5 @@ private val MoviesListType.titleResId: Int
         MoviesListType.UPCOMING_MOVIES -> R.string.top_upcoming_title
     }
 
-private fun Movie.toViewData() = MovieViewData(
-    id = id,
-    posterUrl = posterUrl,
-)
+private fun Movie.toViewData() =
+    MovieListItem.Movie(id, posterUrl)
