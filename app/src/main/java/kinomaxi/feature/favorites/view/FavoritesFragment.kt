@@ -61,7 +61,7 @@ class FavoritesFragment : Fragment() {
         with(viewBinding) {
             moviesListView.isVisible = favoriteMovies.isNotEmpty()
             emptyDataView.isVisible = favoriteMovies.isEmpty()
-            (moviesListView.adapter as? MoviesListAdapter)?.setItems(
+            (moviesListView.adapter as? MoviesListAdapter)?.submitList(
                 favoriteMovies.map(Movie::toViewData)
             )
         }

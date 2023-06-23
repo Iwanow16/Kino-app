@@ -2,24 +2,17 @@ package kinomaxi.feature.movieDetails.view
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.AsyncDifferConfig
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import kinomaxi.databinding.ItemMovieImageBinding
 import kinomaxi.feature.movieDetails.model.MovieImage
 
 /**
  * Адаптер для списка изображений фильма
  */
-class MovieImagesAdapter : RecyclerView.Adapter<MovieImageViewHolder>() {
-
-    private val items = mutableListOf<MovieImage>()
-
-    fun setItems(items: List<MovieImage>) {
-        this.items.clear()
-        this.items.addAll(items)
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int = items.size
+class MovieImagesAdapter : ListAdapter<MovieImage, MovieImageViewHolder>
+    (AsyncDifferConfig.Builder(DiffCallback()).build()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieImageViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -28,6 +21,16 @@ class MovieImagesAdapter : RecyclerView.Adapter<MovieImageViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: MovieImageViewHolder, position: Int) {
-        holder.setData(items[position])
+        holder.setData(currentList[position])
     }
 }
+
+private class DiffCallback : DiffUtil.ItemCallback<MovieImage>() {
+
+    override fun areItemsTheSame(oldItem: MovieImage, newItem: MovieImage) =
+        oldItem.imageUrl == newItem.imageUrl
+
+    override fun areContentsTheSame(oldItem: MovieImage, newItem: MovieImage) =
+        oldItem == newItem
+}
+

@@ -4,26 +4,20 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.AsyncDifferConfig
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import kinomaxi.databinding.ItemMovieBinding
 
 /**
  * Адаптер для списка фильмов
  */
-class MoviesListAdapter(
+
+class MoviesListAdapter (
     private val onMovieClick: (movieId: Long) -> Unit,
     private val isFavoritesList: Boolean = false,
-) : RecyclerView.Adapter<MovieViewHolder>() {
-
-    private val items = mutableListOf<MovieViewData>()
-
-    fun setItems(items: List<MovieViewData>) {
-        this.items.clear()
-        this.items.addAll(items)
-        notifyDataSetChanged()
-    }
-
-    override fun getItemCount(): Int = items.size
+    ) : ListAdapter<MovieViewData, MovieViewHolder>
+    (AsyncDifferConfig.Builder(DiffCallback()).build()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -32,7 +26,7 @@ class MoviesListAdapter(
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        holder.setData(items[position])
+        holder.setData(currentList[position])
     }
 
     override fun onViewAttachedToWindow(holder: MovieViewHolder) {
@@ -49,4 +43,13 @@ class MoviesListAdapter(
             }
         }
     }
+}
+
+private class DiffCallback : DiffUtil.ItemCallback<MovieViewData>() {
+
+    override fun areItemsTheSame(oldItem: MovieViewData, newItem: MovieViewData) =
+        oldItem.id == newItem.id
+
+    override fun areContentsTheSame(oldItem: MovieViewData, newItem: MovieViewData) =
+        oldItem == newItem
 }
