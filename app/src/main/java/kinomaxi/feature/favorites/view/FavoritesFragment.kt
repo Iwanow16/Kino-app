@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import kinomaxi.R
 import kinomaxi.databinding.FragmentFavoritesBinding
 import kinomaxi.feature.movieDetails.view.MovieDetailsFragment
@@ -52,7 +51,14 @@ class FavoritesFragment : Fragment() {
         with(viewBinding) {
             moviesListView.adapter = MoviesListAdapter(::onMovieClick, isFavoritesList = true)
             moviesListView.layoutManager = GridLayoutManager(requireContext(), 2).apply {
-//                spanSizeLookup =
+                spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                    override fun getSpanSize(position: Int): Int {
+                        return when ((moviesListView.adapter as MoviesListAdapter).getItemViewType(position)) {
+                            R.layout.item_banner -> 2
+                            else -> 1
+                        }
+                    }
+                }
             }
         }
 
@@ -66,7 +72,7 @@ class FavoritesFragment : Fragment() {
     private fun showItems(favoriteMovies: List<Movie>, banners: List<Banner>) {
         with(viewBinding) {
             val items: List<MovieListItem> =
-                favoriteMovies.map(Movie::toViewData) + banners.map(Banner::toViewData)
+                banners.map(Banner::toViewData) + favoriteMovies.map(Movie::toViewData)
             moviesListView.isVisible = favoriteMovies.isNotEmpty()
             emptyDataView.isVisible = favoriteMovies.isEmpty()
             (moviesListView.adapter as? MoviesListAdapter)?.submitList(items)
@@ -79,11 +85,3 @@ private fun Movie.toViewData() =
 
 private fun Banner.toViewData() =
     MovieListItem.Banner(text)
-
-
-
-
-
-
-
-

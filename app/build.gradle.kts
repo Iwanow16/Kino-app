@@ -48,8 +48,10 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
+
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
+    implementation("androidx.recyclerview:recyclerview:1.3.0")
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
 

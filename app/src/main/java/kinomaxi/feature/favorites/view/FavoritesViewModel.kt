@@ -18,7 +18,8 @@ class FavoritesViewModel(
 
     val banners: List<Banner>
         get() = listOf(
-            Banner("This is a banner")
+            Banner("This is a banner one"),
+            Banner("This is a banner two")
         )
 
     companion object {
