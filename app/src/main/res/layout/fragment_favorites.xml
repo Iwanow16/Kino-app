@@ -13,8 +13,8 @@
         android:clipToPadding="false"
         android:orientation="vertical"
         android:padding="4dp"
-        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="2"
+        tools:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        tools:spanCount="2"
         tools:listitem="@layout/item_movie" />
 
     <ViewStub

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
+import kinomaxi.feature.movieList.model.Banner
 import kinomaxi.feature.movieList.model.Movie
 
 class FavoritesViewModel(
@@ -14,6 +15,12 @@ class FavoritesViewModel(
     /** Список избранных фильмов */
     val favoriteMovies: List<Movie>
         get() = favoriteMoviesRepository.getFavoriteMovies()
+
+    val banners: List<Banner>
+        get() = listOf(
+            Banner("This is a banner one"),
+            Banner("This is a banner two")
+        )
 
     companion object {
 

@@ -1,15 +1,11 @@
 package kinomaxi.feature.movieList.view
 
-/**
- * Элемент списка фильмов
- */
-data class MovieViewData(
-    /**
-     * Идентификатор фильма
-     */
-    val id: Long,
-    /**
-     * Ссылка на постер фильма
-     */
-    val posterUrl: String?
-)
+sealed interface MovieListItem {
+    data class Movie(
+        val id: Long,
+        val posterUrl: String?
+    ): MovieListItem
+    data class Banner(
+        val text: String?
+    ): MovieListItem
+}

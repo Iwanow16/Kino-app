@@ -18,7 +18,7 @@ class MovieViewHolder(
     /**
      * Установить данные [data] для отображения
      */
-    fun setData(data: MovieViewData) {
+    fun setData(data: MovieListItem.Movie) {
         Glide.with(imageView).load(data.posterUrl).into(imageView)
         rootView.setOnClickListener { onMovieClick(data.id) }
     }
