@@ -11,7 +11,6 @@ class BannerViewHolder(
     viewBinding: ItemBannerBinding,
 ) : RecyclerView.ViewHolder(viewBinding.root) {
 
-    private val rootView = viewBinding.root
     private val textView = viewBinding.BannerMessage
 
     /**

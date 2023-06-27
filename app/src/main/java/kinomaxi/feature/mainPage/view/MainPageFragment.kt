@@ -8,6 +8,9 @@ import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kinomaxi.R
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
@@ -22,6 +25,7 @@ import kinomaxi.feature.movieList.view.MoviesListAdapter
 import kinomaxi.navigateTo
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
+import kotlinx.coroutines.launch
 
 class MainPageFragment : Fragment() {
 
@@ -66,7 +70,13 @@ class MainPageFragment : Fragment() {
             topUpcomingMoviesList.moviesListSlider.adapter = MoviesListAdapter(::onMovieClick)
         }
 
-        viewModel.setViewStateChangeListener(::showNewState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewState.collect {
+                    showNewState(it)
+                }
+            }
+        }
     }
 
     private fun onMovieClick(movieId: Long) {
