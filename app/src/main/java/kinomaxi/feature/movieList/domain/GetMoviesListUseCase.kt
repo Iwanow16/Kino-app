@@ -25,7 +25,7 @@ class GetMoviesListUseCase(
             MoviesListType.TOP_RATED_MOVIES -> apiService.getTopRatedMovies()
             MoviesListType.POPULAR_MOVIES -> apiService.getPopularMovies()
             MoviesListType.UPCOMING_MOVIES -> apiService.getUpcomingMovies()
-        }::toEntity.invoke(listType)
+        }.toEntity(listType)
     }
 }
 

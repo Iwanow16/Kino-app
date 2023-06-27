@@ -19,7 +19,6 @@ class GetMovieDetailsUseCase(
     private val apiService: MovieDetailsApiService,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) {
-
     /**
      * Получить детальную информацию о фильме по идентификатору [movieId]
      */
@@ -38,7 +37,7 @@ class GetMovieDetailsUseCase(
                     return
                 }
 
-                val isFavorite = favoriteMoviesRepository.isFavorite(movieId)
+                val isFavorite = false //favoriteMoviesRepository.isFavorite(movieId)
                 val details = response.body()?.toEntity(isFavorite)
                 if (details == null) {
                     onFailure()

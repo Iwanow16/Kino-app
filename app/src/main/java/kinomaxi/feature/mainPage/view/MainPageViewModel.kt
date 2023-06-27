@@ -29,7 +29,7 @@ class MainPageViewModel(
         .onStart {  }
         .stateIn(
             viewModelScope,
-            SharingStarted.Eagerly,
+            SharingStarted.WhileSubscribed(),
             MainPageState.Loading
         )
 

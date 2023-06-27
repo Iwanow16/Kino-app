@@ -2,15 +2,19 @@ package kinomaxi.feature.movieDetails.view
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
+import kinomaxi.feature.favorites.data.RoomFavoriteDatabase
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.domain.GetMovieDetailsUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
 import kinomaxi.feature.movieList.model.Movie
+import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
     private val movieId: Long,
@@ -91,10 +95,12 @@ class MovieDetailsViewModel(
             it.copy(isFavorite = !it.isFavorite)
         } ?: return
 
-        if (movieDetails.isFavorite) {
-            favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
-        } else {
-            favoriteMoviesRepository.removeFromFavorites(movieId)
+        viewModelScope.launch {
+            if (movieDetails.isFavorite) {
+                favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
+            } else {
+                favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
+            }
         }
 
         this.movieDetails = movieDetails
@@ -106,7 +112,9 @@ class MovieDetailsViewModel(
         fun createFactory(movieId: Long): ViewModelProvider.Factory {
             return viewModelFactory {
                 initializer {
-                    val favoriteMoviesRepository = FavoriteMoviesRepository.instance
+                    val application = checkNotNull(this[APPLICATION_KEY])
+                    val movieDao = RoomFavoriteDatabase.getDatabase(application).movieDao()
+                    val favoriteMoviesRepository = FavoriteMoviesRepository(movieDao)
                     val getMovieDetailsUseCase = GetMovieDetailsUseCase(
                         MovieDetailsApiService.instance,
                         favoriteMoviesRepository,

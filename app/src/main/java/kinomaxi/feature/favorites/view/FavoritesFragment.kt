@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import kinomaxi.R
 import kinomaxi.databinding.FragmentFavoritesBinding
@@ -18,6 +21,7 @@ import kinomaxi.feature.movieList.view.MoviesListAdapter
 import kinomaxi.navigateTo
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
+import kotlinx.coroutines.launch
 
 class FavoritesFragment : Fragment() {
 
@@ -61,8 +65,13 @@ class FavoritesFragment : Fragment() {
                 }
             }
         }
-
-        showItems(viewModel.favoriteMovies, viewModel.banners)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.favoriteMovies.collect {
+                    showItems(it, viewModel.banners)
+                }
+            }
+        }
     }
 
     private fun onMovieClick(movieId: Long) {
