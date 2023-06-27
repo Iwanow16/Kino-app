@@ -15,17 +15,17 @@ import kotlinx.coroutines.flow.Flow
  * База данных для работы с избранными фильмами
  */
 @Database(entities = [Movie::class], version = 1, exportSchema = false)
-abstract class RoomFavoriteDatabase : RoomDatabase() {
+abstract class FavoriteDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao
 
     companion object {
-        private var INSTANCE: RoomFavoriteDatabase? = null
+        private var INSTANCE: FavoriteDatabase? = null
 
-        fun getDatabase(context: Context): RoomFavoriteDatabase {
+        fun getDatabase(context: Context): FavoriteDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    RoomFavoriteDatabase::class.java,
+                    FavoriteDatabase::class.java,
                     "favorite_database"
                 ).build()
                 INSTANCE = instance

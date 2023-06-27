@@ -1,19 +1,28 @@
 package kinomaxi.feature.movieDetails.view
 
+import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import kinomaxi.feature.favorites.data.FavoriteDatabase
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
-import kinomaxi.feature.favorites.data.RoomFavoriteDatabase
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.domain.GetMovieDetailsUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
 import kinomaxi.feature.movieList.model.Movie
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MovieDetailsViewModel(
@@ -26,67 +35,32 @@ class MovieDetailsViewModel(
     private var movieDetails: MovieDetails? = null
     private var movieImages: List<MovieImage>? = null
 
-    private var viewState: MovieDetailsViewState = MovieDetailsViewState.Loading
-        set(value) {
-            field = value
-            viewStateChangeListener(value)
-        }
-
-    private var viewStateChangeListener: (MovieDetailsViewState) -> Unit = {}
-
-    fun setViewStateChangeListener(listener: (MovieDetailsViewState) -> Unit) {
-        viewStateChangeListener = listener
-        viewStateChangeListener(viewState)
-    }
-
-    init {
-        loadData()
-    }
+    private var _viewState = MutableStateFlow<MovieDetailsViewState>(MovieDetailsViewState.Loading)
+    val viewState: Flow<MovieDetailsViewState> = _viewState.asStateFlow()
+        .onSubscription { loadData() }
+        .onStart {  }
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            MovieDetailsViewState.Loading
+        )
 
     fun refreshData() {
-        viewState = MovieDetailsViewState.Loading
+        _viewState.value = MovieDetailsViewState.Loading
         loadData()
     }
 
     private fun loadData() {
-        loadMovieDetails()
-        loadMovieImages()
-    }
+        viewModelScope.launch {
+            try {
+                movieDetails = async { getMovieDetailsById(movieId) }.await()
+                movieImages = async { getMovieImagesById(movieId) }.await()
+                _viewState.value = MovieDetailsViewState.Success(movieDetails!!, movieImages!!)
 
-    private fun loadMovieDetails() {
-        getMovieDetailsById(
-            movieId,
-            onSuccess = { details ->
-                movieDetails = details.takeUnless { viewState == MovieDetailsViewState.Error }
-
-                val images = movieImages
-                if (images != null) {
-                    viewState = MovieDetailsViewState.Success(details, images)
-                }
-            },
-            onFailure = {
-                movieDetails = null
-                viewState = MovieDetailsViewState.Error
+            } catch (e: Exception) {
+                _viewState.value = MovieDetailsViewState.Error
             }
-        )
-    }
-
-    private fun loadMovieImages() {
-        getMovieImagesById(
-            movieId,
-            onSuccess = { images ->
-                movieImages = images.takeUnless { viewState == MovieDetailsViewState.Error }
-
-                val details = movieDetails
-                if (details != null) {
-                    viewState = MovieDetailsViewState.Success(details, images)
-                }
-            },
-            onFailure = {
-                movieImages = null
-                viewState = MovieDetailsViewState.Error
-            }
-        )
+        }
     }
 
     fun toggleFavorites() {
@@ -95,16 +69,18 @@ class MovieDetailsViewModel(
             it.copy(isFavorite = !it.isFavorite)
         } ?: return
 
-        viewModelScope.launch {
             if (movieDetails.isFavorite) {
-                favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
+                viewModelScope.launch {
+                    favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
+                }
             } else {
-                favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
+                viewModelScope.launch {
+                    favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
+                }
             }
-        }
 
         this.movieDetails = movieDetails
-        viewState = MovieDetailsViewState.Success(movieDetails, movieImages)
+        _viewState.value = MovieDetailsViewState.Success(movieDetails, movieImages)
     }
 
     companion object {
@@ -113,7 +89,7 @@ class MovieDetailsViewModel(
             return viewModelFactory {
                 initializer {
                     val application = checkNotNull(this[APPLICATION_KEY])
-                    val movieDao = RoomFavoriteDatabase.getDatabase(application).movieDao()
+                    val movieDao = FavoriteDatabase.getDatabase(application).movieDao()
                     val favoriteMoviesRepository = FavoriteMoviesRepository(movieDao)
                     val getMovieDetailsUseCase = GetMovieDetailsUseCase(
                         MovieDetailsApiService.instance,

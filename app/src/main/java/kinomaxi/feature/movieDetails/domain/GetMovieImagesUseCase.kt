@@ -18,34 +18,10 @@ class GetMovieImagesUseCase(
     /**
      * Получить список изображений фильма по идентификатору [movieId]
      */
-    operator fun invoke(
+    suspend operator fun invoke(
         movieId: Long,
-        onSuccess: (images: List<MovieImage>) -> Unit,
-        onFailure: () -> Unit
-    ) {
-        apiService.getMovieImages(movieId).enqueue(object : Callback<RestMovieImagesResponse> {
-            override fun onResponse(
-                call: Call<RestMovieImagesResponse>,
-                response: Response<RestMovieImagesResponse>
-            ) {
-                if (!response.isSuccessful) {
-                    onFailure()
-                    return
-                }
-
-                val images = response.body()?.toImages()
-                if (images == null) {
-                    onFailure()
-                    return
-                }
-
-                onSuccess(images)
-            }
-
-            override fun onFailure(call: Call<RestMovieImagesResponse>, t: Throwable) {
-                onFailure()
-            }
-        })
+    ) : List<MovieImage> {
+        return apiService.getMovieImages(movieId).toImages()
     }
 }
 

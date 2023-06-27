@@ -1,5 +1,6 @@
 package kinomaxi.feature.movieDetails.domain
 
+import androidx.lifecycle.LifecycleOwner
 import kinomaxi.AppConfig
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
@@ -7,6 +8,8 @@ import kinomaxi.feature.movieDetails.data.RestMovieDetails
 import kinomaxi.feature.movieDetails.data.RestMovieGenre
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,35 +25,11 @@ class GetMovieDetailsUseCase(
     /**
      * Получить детальную информацию о фильме по идентификатору [movieId]
      */
-    operator fun invoke(
+    suspend operator fun invoke(
         movieId: Long,
-        onSuccess: (details: MovieDetails) -> Unit,
-        onFailure: () -> Unit
-    ) {
-        apiService.getMovieDetails(movieId).enqueue(object : Callback<RestMovieDetails> {
-            override fun onResponse(
-                call: Call<RestMovieDetails>,
-                response: Response<RestMovieDetails>
-            ) {
-                if (!response.isSuccessful) {
-                    onFailure()
-                    return
-                }
-
-                val isFavorite = false //favoriteMoviesRepository.isFavorite(movieId)
-                val details = response.body()?.toEntity(isFavorite)
-                if (details == null) {
-                    onFailure()
-                    return
-                }
-
-                onSuccess(details)
-            }
-
-            override fun onFailure(call: Call<RestMovieDetails>, t: Throwable) {
-                onFailure()
-            }
-        })
+    ): MovieDetails {
+        val isFavorite = favoriteMoviesRepository.isFavorite(movieId)
+        return apiService.getMovieDetails(movieId).toEntity(isFavorite)
     }
 }
 

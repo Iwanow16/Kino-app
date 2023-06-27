@@ -9,6 +9,9 @@ import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import kinomaxi.R
 import kinomaxi.databinding.FragmentMovieDetailsBinding
@@ -17,6 +20,7 @@ import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
+import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -65,7 +69,13 @@ class MovieDetailsFragment : Fragment() {
             }
         }
 
-        viewModel.setViewStateChangeListener(::showNewState)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.viewState.collect {
+                    showNewState(it)
+                }
+            }
+        }
     }
 
     private fun showNewState(state: MovieDetailsViewState) {
