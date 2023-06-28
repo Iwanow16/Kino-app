@@ -72,8 +72,6 @@ class FavoritesFragment : Fragment() {
                 }
             }
         }
-
-        //showItems(viewModel.favoriteMovies, viewModel.banners)
     }
 
     private fun onMovieClick(movieId: Long) {

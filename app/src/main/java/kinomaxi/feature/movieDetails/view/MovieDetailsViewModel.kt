@@ -1,6 +1,5 @@
 package kinomaxi.feature.movieDetails.view
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -12,15 +11,17 @@ import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.domain.GetMovieDetailsUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
+import kinomaxi.feature.movieDetails.domain.IsMovieFavoriteFlow
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
 import kinomaxi.feature.movieList.model.Movie
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -29,21 +30,24 @@ class MovieDetailsViewModel(
     private val movieId: Long,
     private val getMovieDetailsById: GetMovieDetailsUseCase,
     private val getMovieImagesById: GetMovieImagesUseCase,
+    private val isMovieFavoriteFlow: IsMovieFavoriteFlow,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
 
-    private var movieDetails: MovieDetails? = null
-    private var movieImages: List<MovieImage>? = null
-
     private var _viewState = MutableStateFlow<MovieDetailsViewState>(MovieDetailsViewState.Loading)
-    val viewState: Flow<MovieDetailsViewState> = _viewState.asStateFlow()
-        .onSubscription { loadData() }
-        .onStart {  }
-        .stateIn(
+    var viewState: Flow<MovieDetailsViewState> = combine(
+        _viewState.asStateFlow().onSubscription { loadData() }.stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
-            MovieDetailsViewState.Loading
-        )
+            _viewState.value
+        ),
+        isMovieFavoriteFlow(movieId)
+    ) { viewState: MovieDetailsViewState, isFavorite: Boolean ->
+        if (viewState is MovieDetailsViewState.Success) {
+            viewState.movieDetails.isFavorite = isFavorite
+        }
+        viewState
+    }
 
     fun refreshData() {
         _viewState.value = MovieDetailsViewState.Loading
@@ -51,11 +55,19 @@ class MovieDetailsViewModel(
     }
 
     private fun loadData() {
+        val getMovieDetails = viewModelScope.async { getMovieDetailsById(movieId) }
+        val getMovieImages = viewModelScope.async { getMovieImagesById(movieId) }
         viewModelScope.launch {
             try {
-                movieDetails = async { getMovieDetailsById(movieId) }.await()
-                movieImages = async { getMovieImagesById(movieId) }.await()
-                _viewState.value = MovieDetailsViewState.Success(movieDetails!!, movieImages!!)
+                val (movieDetails, movieImages) = listOf(
+                    getMovieDetails,
+                    getMovieImages,
+                ).awaitAll()
+                _viewState.value =
+                    MovieDetailsViewState.Success(
+                        movieDetails as MovieDetails,
+                        movieImages as List<MovieImage>,
+                    )
 
             } catch (e: Exception) {
                 _viewState.value = MovieDetailsViewState.Error
@@ -64,23 +76,15 @@ class MovieDetailsViewModel(
     }
 
     fun toggleFavorites() {
-        val movieImages = movieImages ?: return
-        val movieDetails = movieDetails?.let {
-            it.copy(isFavorite = !it.isFavorite)
-        } ?: return
-
-            if (movieDetails.isFavorite) {
-                viewModelScope.launch {
-                    favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
-                }
+        val viewState = _viewState.value as? MovieDetailsViewState.Success ?: return
+        val movieDetails = viewState.movieDetails
+        viewModelScope.launch {
+            if (!movieDetails.isFavorite) {
+                favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
             } else {
-                viewModelScope.launch {
-                    favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
-                }
+                favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
             }
-
-        this.movieDetails = movieDetails
-        _viewState.value = MovieDetailsViewState.Success(movieDetails, movieImages)
+        }
     }
 
     companion object {
@@ -98,11 +102,15 @@ class MovieDetailsViewModel(
                     val getMovieImagesUseCase = GetMovieImagesUseCase(
                         MovieDetailsApiService.instance
                     )
+                    val isMovieFavoriteFlow = IsMovieFavoriteFlow(
+                        favoriteMoviesRepository,
+                    )
 
                     MovieDetailsViewModel(
                         movieId,
                         getMovieDetailsById = getMovieDetailsUseCase,
                         getMovieImagesById = getMovieImagesUseCase,
+                        isMovieFavoriteFlow = isMovieFavoriteFlow,
                         favoriteMoviesRepository = favoriteMoviesRepository,
                     )
                 }

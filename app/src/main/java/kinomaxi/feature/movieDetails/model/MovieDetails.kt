@@ -17,5 +17,5 @@ data class MovieDetails(
     val releaseDate: LocalDate,
     val lengthMinutes: Int,
     val rating: Float,
-    val isFavorite: Boolean,
+    var isFavorite: Boolean,
 )
