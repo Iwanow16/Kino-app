@@ -1,20 +1,26 @@
 package kinomaxi.feature.favorites.data
 
+import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
-import kinomaxi.feature.movieList.model.MovieDB
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
  * Репозиторий для работы с избранными фильмами
  */
-class FavoriteMoviesRepository(private val movieDao: MovieDao) {
+class FavoriteMoviesRepository(private val movieDao: FavoriteMovieDao) {
 
     /**
      * Cписок избранных фильмов
      */
     val favoriteMovies: Flow<List<Movie>> = movieDao.getFavoriteMovies().map {
-        it.map { movieDB -> Movie(movieDB.id, movieDB.title, movieDB.posterUrl) }
+        it.map { FavoriteMovie ->
+            Movie(
+                FavoriteMovie.id,
+                FavoriteMovie.title,
+                FavoriteMovie.posterUrl
+            )
+        }
     }
 
     /**
@@ -43,4 +49,4 @@ class FavoriteMoviesRepository(private val movieDao: MovieDao) {
 }
 
 private fun Movie.toEntity() =
-    MovieDB(id, title, posterUrl)
+    FavoriteMovie(id, title, posterUrl)

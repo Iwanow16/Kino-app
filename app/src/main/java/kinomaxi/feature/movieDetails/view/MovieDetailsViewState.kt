@@ -25,7 +25,7 @@ sealed class MovieDetailsViewState {
      * @param movieImages список изображений фильма
      */
     data class Success(
-        var movieDetails: MovieDetails,
+        val movieDetails: MovieDetails,
         val movieImages: List<MovieImage>,
     ) : MovieDetailsViewState()
 

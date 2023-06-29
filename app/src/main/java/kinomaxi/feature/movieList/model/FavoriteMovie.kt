@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 /**
  * Сущность фильма базы данных
  */
-@Entity(tableName = "movie_database")
-data class MovieDB(
+@Entity(tableName = "favorite_movies")
+data class FavoriteMovie(
     @PrimaryKey val id: Long,
     val title: String,
     val posterUrl: String?,

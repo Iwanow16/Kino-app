@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import kinomaxi.feature.favorites.data.FavoriteDatabase
+import kinomaxi.feature.favorites.data.AppDatabase
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
 import kinomaxi.feature.movieList.model.Banner
 import kinomaxi.feature.movieList.model.Movie
@@ -29,8 +29,8 @@ class FavoritesViewModel(
             initializer {
                 val application =
                     checkNotNull(this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY])
-                val movieDao = FavoriteDatabase.getDatabase(application).movieDao()
-                val favoriteMoviesRepository = FavoriteMoviesRepository(movieDao)
+                val favoriteMovieDao = AppDatabase.getDatabase(application).favoriteMovieDao()
+                val favoriteMoviesRepository = FavoriteMoviesRepository(favoriteMovieDao)
 
                 FavoritesViewModel(
                     favoriteMoviesRepository = favoriteMoviesRepository,
