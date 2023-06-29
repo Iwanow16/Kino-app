@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -26,11 +25,10 @@ class MainPageViewModel(
     private var _viewState = MutableStateFlow<MainPageState>(MainPageState.Loading)
     val viewState: Flow<MainPageState> = _viewState.asStateFlow()
         .onSubscription { loadData() }
-        .onStart {  }
         .stateIn(
             viewModelScope,
-            SharingStarted.Eagerly,
-            MainPageState.Loading
+            SharingStarted.WhileSubscribed(),
+            _viewState.value
         )
 
     fun refreshData() {
@@ -39,14 +37,16 @@ class MainPageViewModel(
     }
 
     private fun loadData() {
+        val getTopRatedMovies = viewModelScope.async { getMoviesList(MoviesListType.TOP_RATED_MOVIES) }
+        val getPopularMovies = viewModelScope.async { getMoviesList(MoviesListType.POPULAR_MOVIES) }
+        val getUpcomingMovies = viewModelScope.async { getMoviesList(MoviesListType.UPCOMING_MOVIES) }
         viewModelScope.launch {
             try {
-
-                val (topRatedMovies, popularMovies, upcomingMovies) = awaitAll(
-                    async { getMoviesList(MoviesListType.TOP_RATED_MOVIES) },
-                    async { getMoviesList(MoviesListType.POPULAR_MOVIES) },
-                    async { getMoviesList(MoviesListType.UPCOMING_MOVIES) },
-                )
+                val (topRatedMovies, popularMovies, upcomingMovies) = listOf(
+                    getTopRatedMovies,
+                    getPopularMovies,
+                    getUpcomingMovies
+                ).awaitAll()
 
                 val viewData = MainPageData(
                     topRatedMoviesList = topRatedMovies,

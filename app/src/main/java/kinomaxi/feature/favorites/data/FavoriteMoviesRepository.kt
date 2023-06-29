@@ -1,46 +1,52 @@
 package kinomaxi.feature.favorites.data
 
+import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 /**
  * Репозиторий для работы с избранными фильмами
  */
-class FavoriteMoviesRepository {
-
-    private val favoriteMovies = mutableMapOf<Long, Movie>()
+class FavoriteMoviesRepository(private val movieDao: FavoriteMovieDao) {
 
     /**
-     * Добавить фильм [movie] в список избранных фильмов
+     * Cписок избранных фильмов
      */
-    fun addToFavorites(movie: Movie) {
-        favoriteMovies[movie.id] = movie
-    }
-
-    /**
-     * Удалить фильм с идентификатором [movieId] из списка избранных фильмов
-     */
-    fun removeFromFavorites(movieId: Long) {
-        favoriteMovies.remove(movieId)
+    val favoriteMovies: Flow<List<Movie>> = movieDao.getFavoriteMovies().map {
+        it.map { FavoriteMovie ->
+            Movie(
+                FavoriteMovie.id,
+                FavoriteMovie.title,
+                FavoriteMovie.posterUrl
+            )
+        }
     }
 
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    fun isFavorite(movieId: Long): Boolean {
-        return favoriteMovies.contains(movieId)
+    suspend fun isFavorite(movieId: Long) = movieDao.isFavorite(movieId)
+
+    /**
+     * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
+     */
+    fun isFavoriteDetail(movieId: Long): Flow<Boolean> = movieDao.isFavoriteFlow(movieId)
+
+    /**
+     * Добавить фильм [movie] в список избранных фильмов
+     */
+    suspend fun addToFavorites(movie: Movie) {
+        movieDao.addToFavorites(movie.toEntity())
     }
 
     /**
-     * Получить список избранных фильмов
+     * Удалить фильм с идентификатором [movieId] из списка избранных фильмов
      */
-    fun getFavoriteMovies(): List<Movie> {
-        return favoriteMovies.values.toList()
-    }
-
-    companion object {
-
-        val instance: FavoriteMoviesRepository by lazy {
-            FavoriteMoviesRepository()
-        }
+    suspend fun removeFromFavorites(movie: Movie) {
+        movieDao.removeFromFavorites(movie.toEntity())
     }
 }
+
+private fun Movie.toEntity() =
+    FavoriteMovie(id, title, posterUrl)

@@ -23,6 +23,12 @@ android {
 
         vectorDrawables.useSupportLibrary = true
         resourceConfigurations.addAll(listOf("ru"))
+
+        kapt {
+            arguments {
+                arg("room.schemaLocation", "$projectDir/schemas")
+            }
+        }
     }
 
     buildTypes {
@@ -48,7 +54,6 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
 
-
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.coordinatorlayout:coordinatorlayout:1.2.0")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
@@ -59,6 +64,10 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.15.1")
     kapt("com.github.bumptech.glide:compiler:4.15.1")
+
+    implementation ("androidx.room:room-runtime:2.5.2")
+    implementation ("androidx.room:room-ktx:2.5.2")
+    kapt ("androidx.room:room-compiler:2.5.2")
 
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
