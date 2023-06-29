@@ -31,7 +31,7 @@ class FavoriteMoviesRepository(private val movieDao: FavoriteMovieDao) {
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    fun isFavoriteDetail(movieId: Long): Flow<Boolean> = movieDao.isFavoriteDetail(movieId)
+    fun isFavoriteDetail(movieId: Long): Flow<Boolean> = movieDao.isFavoriteFlow(movieId)
 
     /**
      * Добавить фильм [movie] в список избранных фильмов

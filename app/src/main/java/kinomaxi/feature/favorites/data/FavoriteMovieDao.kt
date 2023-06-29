@@ -32,7 +32,7 @@ interface FavoriteMovieDao {
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
     @Query("SELECT COUNT(*) <> 0 FROM favorite_movies WHERE id IN (:movieId)")
-    fun isFavoriteDetail(movieId: Long): Flow<Boolean>
+    fun isFavoriteFlow(movieId: Long): Flow<Boolean>
 
     /**
      * Получить список избранных фильмов

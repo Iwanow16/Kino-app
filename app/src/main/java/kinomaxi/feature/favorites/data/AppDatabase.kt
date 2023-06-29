@@ -3,10 +3,8 @@ package kinomaxi.feature.favorites.data
 import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.RenameTable
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.migration.AutoMigrationSpec
 import kinomaxi.feature.movieList.model.FavoriteMovie
 
 /**
@@ -21,10 +19,6 @@ import kinomaxi.feature.movieList.model.FavoriteMovie
     ]
 )
 abstract class AppDatabase : RoomDatabase() {
-
-    @RenameTable(fromTableName = "movie_database", toTableName = "favorite_movies")
-    class MyAutoMigration : AutoMigrationSpec
-
     abstract fun favoriteMovieDao(): FavoriteMovieDao
 
     companion object {
