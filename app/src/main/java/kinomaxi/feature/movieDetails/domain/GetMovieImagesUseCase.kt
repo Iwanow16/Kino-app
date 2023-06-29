@@ -4,9 +4,6 @@ import kinomaxi.AppConfig
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.data.RestMovieImagesResponse
 import kinomaxi.feature.movieDetails.model.MovieImage
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 /**
  * Бизнес-сценарий получения списка изображений фильма
@@ -20,7 +17,7 @@ class GetMovieImagesUseCase(
      */
     suspend operator fun invoke(
         movieId: Long,
-    ) : List<MovieImage> {
+    ): List<MovieImage> {
         return apiService.getMovieImages(movieId).toImages()
     }
 }

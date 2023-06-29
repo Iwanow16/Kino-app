@@ -1,11 +1,8 @@
 package kinomaxi.feature.mainPage.view
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import kinomaxi.feature.movieList.data.MoviesListApiService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.movieList.domain.GetMoviesListUseCase
 import kinomaxi.feature.movieList.model.MoviesListType
 import kotlinx.coroutines.async
@@ -17,8 +14,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainPageViewModel(
+@HiltViewModel
+class MainPageViewModel @Inject constructor(
     private val getMoviesList: GetMoviesListUseCase,
 ) : ViewModel() {
 
@@ -56,19 +55,6 @@ class MainPageViewModel(
                 _viewState.value = MainPageState.Success(viewData)
             } catch (e: Exception) {
                 _viewState.value = MainPageState.Error
-            }
-        }
-    }
-
-    companion object {
-
-        val Factory: ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val getMoviesListUseCase = GetMoviesListUseCase(MoviesListApiService.instance)
-
-                MainPageViewModel(
-                    getMoviesList = getMoviesListUseCase,
-                )
             }
         }
     }

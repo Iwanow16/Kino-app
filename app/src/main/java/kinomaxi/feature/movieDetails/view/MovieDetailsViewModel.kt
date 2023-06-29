@@ -1,14 +1,9 @@
 package kinomaxi.feature.movieDetails.view
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import kinomaxi.feature.favorites.data.AppDatabase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
-import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.domain.GetMovieDetailsUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
 import kinomaxi.feature.movieDetails.domain.IsMovieFavoriteFlow
@@ -25,15 +20,16 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MovieDetailsViewModel(
+@HiltViewModel
+class MovieDetailsViewModel @Inject constructor(
     private val movieId: Long,
     private val getMovieDetailsById: GetMovieDetailsUseCase,
     private val getMovieImagesById: GetMovieImagesUseCase,
     private val isMovieFavoriteFlow: IsMovieFavoriteFlow,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
-
     private val _viewState = MutableStateFlow<MovieDetailsViewState>(MovieDetailsViewState.Loading)
     val viewState: Flow<MovieDetailsViewState> = combine(
         _viewState.asStateFlow().onSubscription { loadData() }.stateIn(
@@ -84,37 +80,6 @@ class MovieDetailsViewModel(
                 favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
             } else {
                 favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
-            }
-        }
-    }
-
-    companion object {
-
-        fun createFactory(movieId: Long): ViewModelProvider.Factory {
-            return viewModelFactory {
-                initializer {
-                    val application = checkNotNull(this[APPLICATION_KEY])
-                    val favoriteMovieDao = AppDatabase.getDatabase(application).favoriteMovieDao()
-                    val favoriteMoviesRepository = FavoriteMoviesRepository(favoriteMovieDao)
-                    val getMovieDetailsUseCase = GetMovieDetailsUseCase(
-                        MovieDetailsApiService.instance,
-                        favoriteMoviesRepository,
-                    )
-                    val getMovieImagesUseCase = GetMovieImagesUseCase(
-                        MovieDetailsApiService.instance
-                    )
-                    val isMovieFavoriteFlow = IsMovieFavoriteFlow(
-                        favoriteMoviesRepository,
-                    )
-
-                    MovieDetailsViewModel(
-                        movieId,
-                        getMovieDetailsById = getMovieDetailsUseCase,
-                        getMovieImagesById = getMovieImagesUseCase,
-                        isMovieFavoriteFlow = isMovieFavoriteFlow,
-                        favoriteMoviesRepository = favoriteMoviesRepository,
-                    )
-                }
             }
         }
     }

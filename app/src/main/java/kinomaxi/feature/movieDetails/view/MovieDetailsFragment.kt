@@ -13,6 +13,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
+import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentMovieDetailsBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
@@ -24,6 +25,7 @@ import kotlinx.coroutines.launch
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
+@AndroidEntryPoint
 class MovieDetailsFragment : Fragment() {
 
     private var _viewBinding: FragmentMovieDetailsBinding? = null
@@ -33,9 +35,7 @@ class MovieDetailsFragment : Fragment() {
         requireArguments().getLong(MOVIE_ID_ARG_KEY)
     }
 
-    private val viewModel by viewModels<MovieDetailsViewModel>(
-        factoryProducer = { MovieDetailsViewModel.createFactory(movieId) }
-    )
+    private val viewModel: MovieDetailsViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

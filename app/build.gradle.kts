@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id ("dagger.hilt.android.plugin")
 }
 
 android {
@@ -50,6 +51,9 @@ android {
 
 dependencies {
 
+    implementation ("com.google.dagger:hilt-android:2.46.1")
+    kapt ("com.google.dagger:hilt-compiler:2.46.1")
+
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.fragment:fragment-ktx:1.6.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -74,4 +78,8 @@ dependencies {
 
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.9.3"))
     implementation("com.squareup.okhttp3:logging-interceptor")
+}
+
+kapt {
+    correctErrorTypes = true
 }
