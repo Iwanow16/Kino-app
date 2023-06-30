@@ -1,6 +1,5 @@
 package kinomaxi.feature.movieList.data
 
-import kinomaxi.createApiService
 import retrofit2.http.GET
 
 /**
@@ -26,7 +25,4 @@ interface MoviesListApiService {
     @GET("movie/upcoming")
     suspend fun getUpcomingMovies(): RestMoviesListResponse
 
-    companion object {
-        val instance by lazy { createApiService<MoviesListApiService>() }
-    }
 }

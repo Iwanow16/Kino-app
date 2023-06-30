@@ -4,16 +4,20 @@ import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * Репозиторий для работы с избранными фильмами
  */
-class FavoriteMoviesRepository(private val movieDao: FavoriteMovieDao) {
+
+class FavoriteMoviesRepository @Inject constructor(
+    private val favoriteMovieDao: FavoriteMovieDao
+    ) {
 
     /**
      * Cписок избранных фильмов
      */
-    val favoriteMovies: Flow<List<Movie>> = movieDao.getFavoriteMovies().map {
+    val favoriteMovies: Flow<List<Movie>> = favoriteMovieDao.getFavoriteMovies().map {
         it.map { FavoriteMovie ->
             Movie(
                 FavoriteMovie.id,
@@ -26,25 +30,25 @@ class FavoriteMoviesRepository(private val movieDao: FavoriteMovieDao) {
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    suspend fun isFavorite(movieId: Long) = movieDao.isFavorite(movieId)
+    suspend fun isFavorite(movieId: Long) = favoriteMovieDao.isFavorite(movieId)
 
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    fun isFavoriteDetail(movieId: Long): Flow<Boolean> = movieDao.isFavoriteFlow(movieId)
+    fun isFavoriteDetail(movieId: Long): Flow<Boolean> = favoriteMovieDao.isFavoriteFlow(movieId)
 
     /**
      * Добавить фильм [movie] в список избранных фильмов
      */
     suspend fun addToFavorites(movie: Movie) {
-        movieDao.addToFavorites(movie.toEntity())
+        favoriteMovieDao.addToFavorites(movie.toEntity())
     }
 
     /**
      * Удалить фильм с идентификатором [movieId] из списка избранных фильмов
      */
     suspend fun removeFromFavorites(movie: Movie) {
-        movieDao.removeFromFavorites(movie.toEntity())
+        favoriteMovieDao.removeFromFavorites(movie.toEntity())
     }
 }
 

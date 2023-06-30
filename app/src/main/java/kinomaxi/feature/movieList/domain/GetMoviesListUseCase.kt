@@ -7,11 +7,12 @@ import kinomaxi.feature.movieList.data.RestMoviesListResponse
 import kinomaxi.feature.movieList.model.Movie
 import kinomaxi.feature.movieList.model.MoviesList
 import kinomaxi.feature.movieList.model.MoviesListType
+import javax.inject.Inject
 
 /**
  * Бизнес-сценарий получения списка фильмов
  */
-class GetMoviesListUseCase(
+class GetMoviesListUseCase @Inject constructor(
     private val apiService: MoviesListApiService,
 ) {
 

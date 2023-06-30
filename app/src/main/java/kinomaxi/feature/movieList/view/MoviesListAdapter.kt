@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
-import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,12 +14,10 @@ import kinomaxi.databinding.ItemMovieBinding
 /**
  * Адаптер для списка фильмов
  */
-
 class MoviesListAdapter (
     private val onMovieClick: (movieId: Long) -> Unit,
     private val isFavoritesList: Boolean = false,
-    ) : ListAdapter<MovieListItem, RecyclerView.ViewHolder>
-    (AsyncDifferConfig.Builder(DiffCallback()).build()) {
+    ) : ListAdapter<MovieListItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -73,5 +70,5 @@ private class DiffCallback : DiffUtil.ItemCallback<MovieListItem>() {
     }
 
     override fun areContentsTheSame(oldItem: MovieListItem, newItem: MovieListItem) =
-        oldItem.equals(newItem)
+        oldItem == newItem
 }

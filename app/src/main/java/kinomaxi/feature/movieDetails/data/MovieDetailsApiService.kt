@@ -1,7 +1,5 @@
 package kinomaxi.feature.movieDetails.data
 
-import kinomaxi.createApiService
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 
@@ -21,8 +19,4 @@ interface MovieDetailsApiService {
      */
     @GET("movie/{movie_id}/images?include_image_language=en,null")
     suspend fun getMovieImages(@Path("movie_id") movieId: Long): RestMovieImagesResponse
-
-    companion object {
-        val instance by lazy { createApiService<MovieDetailsApiService>() }
-    }
 }

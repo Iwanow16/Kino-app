@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
@@ -27,14 +28,13 @@ import kinomaxi.setSubtitle
 import kinomaxi.setTitle
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class MainPageFragment : Fragment() {
 
     private var _viewBinding: FragmentMainPageBinding? = null
     private val viewBinding get() = _viewBinding!!
 
-    private val viewModel by viewModels<MainPageViewModel>(
-        factoryProducer = MainPageViewModel.Companion::Factory
-    )
+    private val viewModel: MainPageViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
