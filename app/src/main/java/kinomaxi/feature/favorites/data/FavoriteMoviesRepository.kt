@@ -4,11 +4,15 @@ import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 /**
  * Репозиторий для работы с избранными фильмами
  */
-class FavoriteMoviesRepository(private val favoriteMovieDao: FavoriteMovieDao) {
+
+class FavoriteMoviesRepository @Inject constructor(
+    private val favoriteMovieDao: FavoriteMovieDao
+    ) {
 
     /**
      * Cписок избранных фильмов

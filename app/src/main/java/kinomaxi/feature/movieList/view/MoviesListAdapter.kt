@@ -14,7 +14,6 @@ import kinomaxi.databinding.ItemMovieBinding
 /**
  * Адаптер для списка фильмов
  */
-
 class MoviesListAdapter (
     private val onMovieClick: (movieId: Long) -> Unit,
     private val isFavoritesList: Boolean = false,
@@ -71,5 +70,5 @@ private class DiffCallback : DiffUtil.ItemCallback<MovieListItem>() {
     }
 
     override fun areContentsTheSame(oldItem: MovieListItem, newItem: MovieListItem) =
-        oldItem.equals(newItem)
+        oldItem == newItem
 }
