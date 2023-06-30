@@ -4,11 +4,12 @@ import kinomaxi.AppConfig
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.data.RestMovieImagesResponse
 import kinomaxi.feature.movieDetails.model.MovieImage
+import javax.inject.Inject
 
 /**
  * Бизнес-сценарий получения списка изображений фильма
  */
-class GetMovieImagesUseCase(
+class GetMovieImagesUseCase @Inject constructor(
     private val apiService: MovieDetailsApiService,
 ) {
 

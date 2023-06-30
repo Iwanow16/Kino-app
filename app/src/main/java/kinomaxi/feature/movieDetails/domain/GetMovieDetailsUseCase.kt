@@ -1,6 +1,5 @@
 package kinomaxi.feature.movieDetails.domain
 
-import androidx.lifecycle.LifecycleOwner
 import kinomaxi.AppConfig
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
@@ -8,17 +7,13 @@ import kinomaxi.feature.movieDetails.data.RestMovieDetails
 import kinomaxi.feature.movieDetails.data.RestMovieGenre
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.time.LocalDate
+import javax.inject.Inject
 
 /**
  * Бизнес-сценарий получения детальной информации о фильме
  */
-class GetMovieDetailsUseCase(
+class GetMovieDetailsUseCase @Inject constructor(
     private val apiService: MovieDetailsApiService,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) {

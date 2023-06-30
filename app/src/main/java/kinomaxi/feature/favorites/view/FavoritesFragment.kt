@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
+import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentFavoritesBinding
 import kinomaxi.feature.movieDetails.view.MovieDetailsFragment
@@ -23,14 +24,13 @@ import kinomaxi.setSubtitle
 import kinomaxi.setTitle
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
 
     private var _viewBinding: FragmentFavoritesBinding? = null
     private val viewBinding get() = _viewBinding!!
 
-    private val viewModel by viewModels<FavoritesViewModel>(
-        factoryProducer = FavoritesViewModel.Companion::Factory
-    )
+    private val viewModel: FavoritesViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,

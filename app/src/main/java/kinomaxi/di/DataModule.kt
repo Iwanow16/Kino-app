@@ -1,6 +1,7 @@
 package kinomaxi.di
 
 import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,19 +22,31 @@ class DataModule {
     @Provides
     @Singleton
     fun provideMoviesListApiService() : MoviesListApiService {
-        return createApiService<MoviesListApiService>()
+        return createApiService()
     }
 
     @Provides
     @Singleton
-    fun provideApiService() : MovieDetailsApiService {
-        return createApiService<MovieDetailsApiService>()
+    fun provideDetailApiService() : MovieDetailsApiService {
+        return createApiService()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDatabase(@ApplicationContext context: Context) : AppDatabase {
+        return synchronized(this) {
+            Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                "appDatabase"
+            ).build()
+        }
     }
 
     @Provides
     @Singleton
     fun provideFavoriteMovieDao(@ApplicationContext context: Context) : FavoriteMovieDao {
-        return AppDatabase.getDatabase(context).favoriteMovieDao()
+        return provideDatabase(context).favoriteMovieDao()
     }
 
     @Provides

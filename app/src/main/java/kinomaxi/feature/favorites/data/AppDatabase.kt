@@ -1,9 +1,7 @@
 package kinomaxi.feature.favorites.data
 
-import android.content.Context
 import androidx.room.AutoMigration
 import androidx.room.Database
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import kinomaxi.feature.movieList.model.FavoriteMovie
 
@@ -20,20 +18,4 @@ import kinomaxi.feature.movieList.model.FavoriteMovie
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteMovieDao(): FavoriteMovieDao
-
-    companion object {
-        private var INSTANCE: AppDatabase? = null
-
-        fun getDatabase(context: Context): AppDatabase {
-            return INSTANCE ?: synchronized(this) {
-                val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    AppDatabase::class.java,
-                    "appDatabase"
-                ).build()
-                INSTANCE = instance
-                instance
-            }
-        }
-    }
 }

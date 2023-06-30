@@ -31,10 +31,6 @@ class MovieDetailsFragment : Fragment() {
     private var _viewBinding: FragmentMovieDetailsBinding? = null
     private val viewBinding get() = _viewBinding!!
 
-    private val movieId: Long by lazy {
-        requireArguments().getLong(MOVIE_ID_ARG_KEY)
-    }
-
     private val viewModel: MovieDetailsViewModel by viewModels()
 
     override fun onCreateView(

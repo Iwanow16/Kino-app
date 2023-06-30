@@ -1,5 +1,6 @@
 package kinomaxi.feature.movieDetails.view
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +10,7 @@ import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
 import kinomaxi.feature.movieDetails.domain.IsMovieFavoriteFlow
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
+import kinomaxi.feature.movieDetails.view.MovieDetailsFragment.Companion.MOVIE_ID_ARG_KEY
 import kinomaxi.feature.movieList.model.Movie
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -24,12 +26,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val movieId: Long,
+    private val savedStateHandle: SavedStateHandle,
     private val getMovieDetailsById: GetMovieDetailsUseCase,
     private val getMovieImagesById: GetMovieImagesUseCase,
     private val isMovieFavoriteFlow: IsMovieFavoriteFlow,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
+
+    private val movieId: Long = requireNotNull(savedStateHandle[MOVIE_ID_ARG_KEY])
     private val _viewState = MutableStateFlow<MovieDetailsViewState>(MovieDetailsViewState.Loading)
     val viewState: Flow<MovieDetailsViewState> = combine(
         _viewState.asStateFlow().onSubscription { loadData() }.stateIn(
