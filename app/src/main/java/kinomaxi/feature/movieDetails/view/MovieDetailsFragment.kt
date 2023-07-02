@@ -25,7 +25,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @AndroidEntryPoint
-class MovieDetailsFragment : Fragment(R.layout.fragment_movie_details) {
+class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details) {
 
     private val viewBinding: FragmentMovieDetailsBinding by viewBinding(FragmentMovieDetailsBinding::bind)
 

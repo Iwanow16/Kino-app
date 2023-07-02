@@ -5,6 +5,7 @@ import kinomaxi.feature.favorites.view.FavoritesFragment
 import kinomaxi.feature.mainPage.view.MainPageFragment
 import kinomaxi.feature.movieDetails.view.MovieDetailsFragment
 
+
 object Screens {
     fun favorites() = FragmentScreen {
         FavoritesFragment()

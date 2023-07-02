@@ -40,7 +40,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onSupportNavigateUp(): Boolean {
         if (!super.onSupportNavigateUp()) {
-            onBackPressedDispatcher.onBackPressed()
+            //onBackPressedDispatcher.onBackPressed()
+            App.INSTANCE.router.exit()
         }
         return true
     }
