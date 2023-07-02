@@ -23,7 +23,7 @@ class GetMovieDetailsUseCase @Inject constructor(
     suspend operator fun invoke(
         movieId: Long,
     ): MovieDetails {
-        val isFavorite = favoriteMoviesRepository.isFavorite(movieId)
+        val isFavorite: Boolean = favoriteMoviesRepository.isFavorite(movieId)
         return apiService.getMovieDetails(movieId).toEntity(isFavorite)
     }
 }

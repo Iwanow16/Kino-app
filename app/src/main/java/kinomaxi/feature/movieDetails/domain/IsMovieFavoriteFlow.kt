@@ -8,5 +8,5 @@ class IsMovieFavoriteFlow @Inject constructor(
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) {
     operator fun invoke(movieId: Long): Flow<Boolean> =
-        favoriteMoviesRepository.isFavoriteDetail(movieId)
+        favoriteMoviesRepository.isFavoriteFlow(movieId)
 }

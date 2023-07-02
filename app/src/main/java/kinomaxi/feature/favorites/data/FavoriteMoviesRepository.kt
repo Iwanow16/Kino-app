@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class FavoriteMoviesRepository @Inject constructor(
     private val favoriteMovieDao: FavoriteMovieDao
-    ) {
+) {
 
     /**
      * Cписок избранных фильмов
@@ -30,12 +30,13 @@ class FavoriteMoviesRepository @Inject constructor(
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    suspend fun isFavorite(movieId: Long) = favoriteMovieDao.isFavorite(movieId)
+    suspend fun isFavorite(movieId: Long): Boolean = favoriteMovieDao.isFavorite(movieId)
 
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    fun isFavoriteDetail(movieId: Long): Flow<Boolean> = favoriteMovieDao.isFavoriteFlow(movieId)
+    fun isFavoriteFlow(movieId: Long): Flow<Boolean> =
+        favoriteMovieDao.isFavoriteFlow(movieId)
 
     /**
      * Добавить фильм [movie] в список избранных фильмов
@@ -52,5 +53,5 @@ class FavoriteMoviesRepository @Inject constructor(
     }
 }
 
-private fun Movie.toEntity() =
+private fun Movie.toEntity(): FavoriteMovie =
     FavoriteMovie(id, title, posterUrl)

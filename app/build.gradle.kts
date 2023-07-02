@@ -50,6 +50,8 @@ android {
 }
 
 dependencies {
+    implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.9")
+
     implementation("com.github.terrakok:cicerone:7.1")
 
     implementation ("com.google.dagger:hilt-android:2.46.1")

@@ -2,23 +2,22 @@ package kinomaxi
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.app.App
 import kinomaxi.databinding.ActivityMainBinding
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     private val navigator = AppNavigator(this, R.id.container)
 
-    private lateinit var viewBinding: ActivityMainBinding
+    private val viewBinding: ActivityMainBinding by viewBinding(ActivityMainBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         setSupportActionBar(viewBinding.toolbar)
 
@@ -29,11 +28,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(viewBinding.container.id, fragment)
-            .addToBackStack(null)
-            .commit()
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        App.INSTANCE.navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        App.INSTANCE.navigatorHolder.removeNavigator()
+        super.onPause()
     }
 
     override fun onSupportNavigateUp(): Boolean {

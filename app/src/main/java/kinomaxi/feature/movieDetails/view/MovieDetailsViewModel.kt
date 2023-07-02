@@ -16,11 +16,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onSubscription
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -32,15 +30,11 @@ class MovieDetailsViewModel @Inject constructor(
     private val isMovieFavoriteFlow: IsMovieFavoriteFlow,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
+    private val movieId: Long = savedStateHandle[MOVIE_ID_ARG_KEY] ?: 133
 
-    private val movieId: Long = requireNotNull(savedStateHandle[MOVIE_ID_ARG_KEY])
     private val _viewState = MutableStateFlow<MovieDetailsViewState>(MovieDetailsViewState.Loading)
     val viewState: Flow<MovieDetailsViewState> = combine(
-        _viewState.asStateFlow().onSubscription { loadData() }.stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            _viewState.value
-        ),
+        _viewState.asStateFlow().onSubscription { loadData() },
         isMovieFavoriteFlow(movieId)
     ) { viewState: MovieDetailsViewState, isFavorite: Boolean ->
         if (viewState is MovieDetailsViewState.Success) {
