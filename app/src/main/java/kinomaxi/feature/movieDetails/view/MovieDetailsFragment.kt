@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentMovieDetailsBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
-import kinomaxi.feature.movieDetails.model.MovieDetails
+import kinomaxi.feature.movieDetails.model.MovieDetailsViewData
 import kinomaxi.feature.movieDetails.model.MovieImage
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
@@ -76,18 +76,20 @@ class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details) {
                 contentScrollView.isVisible = true
                 loaderView.hide()
                 errorView.isVisible = false
-                showMovieDetails(state.movieDetails)
-                showMovieImages(state.movieImages)
+                showMovieDetails(state.data)
+                showMovieImages(state.data.movieImages)
             }
         }
     }
 
-    private fun FragmentMovieDetailsBinding.showMovieDetails(movie: MovieDetails) {
+    private fun FragmentMovieDetailsBinding.showMovieDetails(viewData: MovieDetailsViewData) {
+        val movie = viewData.movieDetails
+
         setTitle(movie.title)
         setSubtitle(movie.originalTitle)
 
         moviePosterLayout.apply {
-            val favoriteButtonIconResId = if (movie.isFavorite) {
+            val favoriteButtonIconResId = if (viewData.isFavorite) {
                 R.drawable.ic_favorite_24
             } else {
                 R.drawable.ic_favorite_border_24

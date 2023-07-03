@@ -30,11 +30,6 @@ class FavoriteMoviesRepository @Inject constructor(
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
      */
-    suspend fun isFavorite(movieId: Long): Boolean = favoriteMovieDao.isFavorite(movieId)
-
-    /**
-     * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
-     */
     fun isFavoriteFlow(movieId: Long): Flow<Boolean> =
         favoriteMovieDao.isFavoriteFlow(movieId)
 
@@ -46,7 +41,7 @@ class FavoriteMoviesRepository @Inject constructor(
     }
 
     /**
-     * Удалить фильм с идентификатором [movieId] из списка избранных фильмов
+     * Удалить фильм с идентификатором [movie] из списка избранных фильмов
      */
     suspend fun removeFromFavorites(movie: Movie) {
         favoriteMovieDao.removeFromFavorites(movie.toEntity())
