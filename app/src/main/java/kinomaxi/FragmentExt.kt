@@ -10,7 +10,3 @@ fun Fragment.setTitle(text: String?) {
 fun Fragment.setSubtitle(text: String?) {
     (activity as? AppCompatActivity)?.supportActionBar?.subtitle = text
 }
-
-fun Fragment.navigateTo(fragment: Fragment) {
-    (activity as? MainActivity)?.showFragment(fragment)
-}

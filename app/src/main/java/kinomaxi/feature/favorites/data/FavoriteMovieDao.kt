@@ -17,16 +17,10 @@ interface FavoriteMovieDao {
     suspend fun addToFavorites(movie: FavoriteMovie)
 
     /**
-     * Удалить фильм с идентификатором [movieId] из списка избранных фильмов
+     * Удалить фильм [movie] из списка избранных фильмов
      */
     @Delete
     suspend fun removeFromFavorites(movie: FavoriteMovie)
-
-    /**
-     * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
-     */
-    @Query("SELECT COUNT(*) <> 0 FROM favorite_movies WHERE id IN (:movieId)")
-    suspend fun isFavorite(movieId: Long): Boolean
 
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов

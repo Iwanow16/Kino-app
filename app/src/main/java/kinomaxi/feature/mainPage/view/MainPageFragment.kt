@@ -1,9 +1,7 @@
 package kinomaxi.feature.mainPage.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -11,51 +9,41 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
+import kinomaxi.Screens.DetailsScreen
+import kinomaxi.Screens.FavoriteScreen
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
 import kinomaxi.databinding.LayoutMoviesListBinding
-import kinomaxi.feature.favorites.view.FavoritesFragment
-import kinomaxi.feature.movieDetails.view.MovieDetailsFragment
 import kinomaxi.feature.movieList.model.Movie
 import kinomaxi.feature.movieList.model.MoviesList
 import kinomaxi.feature.movieList.model.MoviesListType
 import kinomaxi.feature.movieList.view.MovieListItem
 import kinomaxi.feature.movieList.view.MoviesListAdapter
-import kinomaxi.navigateTo
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainPageFragment : Fragment() {
+class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
-    private var _viewBinding: FragmentMainPageBinding? = null
-    private val viewBinding get() = _viewBinding!!
+    @Inject
+    lateinit var router: Router
+
+    private val viewBinding: FragmentMainPageBinding by viewBinding(FragmentMainPageBinding::bind)
 
     private val viewModel: MainPageViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _viewBinding = FragmentMainPageBinding.inflate(inflater, container, false)
-        return viewBinding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _viewBinding = null
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         with(viewBinding) {
             favoritesButton.setOnClickListener {
-                navigateTo(FavoritesFragment())
+                router.navigateTo(FavoriteScreen())
             }
             errorView.setOnInflateListener { _, inflated ->
                 with(LayoutErrorViewBinding.bind(inflated)) {
@@ -80,7 +68,7 @@ class MainPageFragment : Fragment() {
     }
 
     private fun onMovieClick(movieId: Long) {
-        navigateTo(MovieDetailsFragment.getInstance(movieId))
+        router.navigateTo(DetailsScreen(movieId))
     }
 
     private fun showNewState(state: MainPageState) {

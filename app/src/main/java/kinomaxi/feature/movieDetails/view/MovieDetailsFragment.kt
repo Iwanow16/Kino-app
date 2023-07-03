@@ -1,9 +1,7 @@
 package kinomaxi.feature.movieDetails.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.isVisible
@@ -12,12 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import by.kirich1409.viewbindingdelegate.viewBinding
 import com.bumptech.glide.Glide
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentMovieDetailsBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
-import kinomaxi.feature.movieDetails.model.MovieDetails
+import kinomaxi.feature.movieDetails.model.MovieDetailsViewData
 import kinomaxi.feature.movieDetails.model.MovieImage
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
@@ -26,26 +25,11 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 @AndroidEntryPoint
-class MovieDetailsFragment : Fragment() {
+class MovieDetailsFragment: Fragment(R.layout.fragment_movie_details) {
 
-    private var _viewBinding: FragmentMovieDetailsBinding? = null
-    private val viewBinding get() = _viewBinding!!
+    private val viewBinding: FragmentMovieDetailsBinding by viewBinding(FragmentMovieDetailsBinding::bind)
 
     private val viewModel: MovieDetailsViewModel by viewModels()
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _viewBinding = FragmentMovieDetailsBinding.inflate(inflater, container, false)
-        return viewBinding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _viewBinding = null
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -92,18 +76,20 @@ class MovieDetailsFragment : Fragment() {
                 contentScrollView.isVisible = true
                 loaderView.hide()
                 errorView.isVisible = false
-                showMovieDetails(state.movieDetails)
-                showMovieImages(state.movieImages)
+                showMovieDetails(state.data)
+                showMovieImages(state.data.movieImages)
             }
         }
     }
 
-    private fun FragmentMovieDetailsBinding.showMovieDetails(movie: MovieDetails) {
+    private fun FragmentMovieDetailsBinding.showMovieDetails(viewData: MovieDetailsViewData) {
+        val movie = viewData.movieDetails
+
         setTitle(movie.title)
         setSubtitle(movie.originalTitle)
 
         moviePosterLayout.apply {
-            val favoriteButtonIconResId = if (movie.isFavorite) {
+            val favoriteButtonIconResId = if (viewData.isFavorite) {
                 R.drawable.ic_favorite_24
             } else {
                 R.drawable.ic_favorite_border_24

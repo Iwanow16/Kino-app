@@ -2,19 +2,30 @@ package kinomaxi
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
+import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.databinding.ActivityMainBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
-    private lateinit var viewBinding: ActivityMainBinding
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
+
+    private val navigator = AppNavigator(this, R.id.container)
+
+    private val viewBinding: ActivityMainBinding by viewBinding(ActivityMainBinding::bind)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
         setSupportActionBar(viewBinding.toolbar)
 
@@ -25,16 +36,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(viewBinding.container.id, fragment)
-            .addToBackStack(null)
-            .commit()
+    override fun onResumeFragments() {
+        super.onResumeFragments()
+        navigatorHolder.setNavigator(navigator)
+    }
+
+    override fun onPause() {
+        navigatorHolder.removeNavigator()
+        super.onPause()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         if (!super.onSupportNavigateUp()) {
-            onBackPressedDispatcher.onBackPressed()
+            router.exit()
         }
         return true
     }

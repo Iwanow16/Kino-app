@@ -1,7 +1,6 @@
 package kinomaxi.feature.movieDetails.view
 
-import kinomaxi.feature.movieDetails.model.MovieDetails
-import kinomaxi.feature.movieDetails.model.MovieImage
+import kinomaxi.feature.movieDetails.model.MovieDetailsViewData
 
 /**
  * Возможные состояния экрана детальной информации о фильме
@@ -21,12 +20,9 @@ sealed class MovieDetailsViewState {
     /**
      * Данные загружены
      *
-     * @param movieDetails информация о фильме
-     * @param movieImages список изображений фильма
+     * @param data информация о фильме
      */
     data class Success(
-        val movieDetails: MovieDetails,
-        val movieImages: List<MovieImage>,
+        val data: MovieDetailsViewData,
     ) : MovieDetailsViewState()
-
 }
