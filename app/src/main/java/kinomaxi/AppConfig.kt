@@ -1,12 +1,8 @@
 package kinomaxi
 
 object AppConfig {
-
-    private const val BASE_URL = "https://themoviedb.ddns.net"
-    const val API_BASE_URL = "$BASE_URL/api/"
-    const val IMAGE_BASE_URL = "$BASE_URL/image/"
+    const val IMAGE_BASE_URL = "https://image.tmdb.org/t/p/"
 
     const val POSTER_PREVIEW_SIZE = "w342"
     const val BACKDROP_PREVIEW_SIZE = "w300"
-
 }

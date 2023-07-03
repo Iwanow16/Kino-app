@@ -24,5 +24,4 @@ interface MoviesListApiService {
      */
     @GET("movie/upcoming")
     suspend fun getUpcomingMovies(): RestMoviesListResponse
-
 }
