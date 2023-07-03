@@ -41,7 +41,7 @@ class FavoriteMoviesRepository @Inject constructor(
     }
 
     /**
-     * Удалить фильм с идентификатором [movie] из списка избранных фильмов
+     * Удалить фильм [movie] из списка избранных фильмов
      */
     suspend fun removeFromFavorites(movie: Movie) {
         favoriteMovieDao.removeFromFavorites(movie.toEntity())
