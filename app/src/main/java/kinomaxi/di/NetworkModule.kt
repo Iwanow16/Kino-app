@@ -4,7 +4,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kinomaxi.AppConfig
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieList.data.MoviesListApiService
 import okhttp3.OkHttpClient
@@ -17,6 +16,9 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class NetworkModule {
 
+    private val bearerToken = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJhODY3ZDkwNWY1OTNjMTU2MGRlMDkyOWQ0ZTExZTZlNyIsInN1YiI6IjY0YTI5ZWQyMTEzODZjMDEzOWFlMmQ1MCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.bzH9FNNjkSmPAx5QCfCF5NqUgEhwIz4OwsQzVfpUlxo"
+    private val baseURL = "https://api.themoviedb.org/3/"
+
     @Provides
     @Singleton
     fun provideHttpClient(): OkHttpClient {
@@ -27,6 +29,7 @@ class NetworkModule {
                     .build()
                 val request = chain.request().newBuilder()
                     .url(url)
+                    .header("Authorization", "Bearer $bearerToken")
                     .build()
                 chain.proceed(request)
             }
@@ -41,7 +44,7 @@ class NetworkModule {
     fun provideRetrofit(httpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .client(httpClient)
-            .baseUrl(AppConfig.API_BASE_URL)
+            .baseUrl(baseURL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
