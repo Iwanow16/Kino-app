@@ -16,33 +16,47 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val getMovieDetailsById: GetMovieDetailsUseCase,
     private val getMovieImagesById: GetMovieImagesUseCase,
-    private val isMovieFavoriteFlow: IsMovieFavoriteFlow,
+    isMovieFavoriteFlow: IsMovieFavoriteFlow,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
-    private val movieId: Long = savedStateHandle[MOVIE_ID_ARG_KEY] ?: 133
+    private val movieId: Long = requireNotNull(savedStateHandle[MOVIE_ID_ARG_KEY])
 
     private val _viewState = MutableStateFlow<MovieDetailsViewState>(MovieDetailsViewState.Loading)
+    private val isFavoriteState: StateFlow<Boolean> = isMovieFavoriteFlow(movieId)
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(),
+            false
+        )
+
     val viewState: Flow<MovieDetailsViewState> = combine(
-        _viewState.asStateFlow().onSubscription { loadData() },
-        isMovieFavoriteFlow(movieId)
+        _viewState.asStateFlow(),
+        isFavoriteState
     ) { viewState: MovieDetailsViewState, isFavorite: Boolean ->
         if (viewState is MovieDetailsViewState.Success) {
             viewState.copy(viewState.movieDetails.copy(isFavorite = isFavorite))
         } else {
             viewState
         }
-    }
+    }.onStart { loadData() }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        _viewState.value
+    )
 
     fun refreshData() {
         _viewState.value = MovieDetailsViewState.Loading
@@ -63,7 +77,6 @@ class MovieDetailsViewModel @Inject constructor(
                         movieDetails as MovieDetails,
                         movieImages as List<MovieImage>,
                     )
-
             } catch (e: Exception) {
                 _viewState.value = MovieDetailsViewState.Error
             }
@@ -74,10 +87,10 @@ class MovieDetailsViewModel @Inject constructor(
         val viewState = _viewState.value as? MovieDetailsViewState.Success ?: return
         val movieDetails = viewState.movieDetails
         viewModelScope.launch {
-            if (!movieDetails.isFavorite) {
-                favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
-            } else {
+            if (isFavoriteState.value) {
                 favoriteMoviesRepository.removeFromFavorites(movieDetails.toMovie())
+            } else {
+                favoriteMoviesRepository.addToFavorites(movieDetails.toMovie())
             }
         }
     }

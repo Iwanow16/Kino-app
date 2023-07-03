@@ -10,10 +10,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.GridLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
-import kinomaxi.Screens.movieDetails
-import kinomaxi.app.App
+import kinomaxi.Screens.DetailsScreen
 import kinomaxi.databinding.FragmentFavoritesBinding
 import kinomaxi.feature.movieList.model.Banner
 import kinomaxi.feature.movieList.model.Movie
@@ -22,9 +22,13 @@ import kinomaxi.feature.movieList.view.MoviesListAdapter
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
+
+    @Inject
+    lateinit var router: Router
 
     private val viewBinding: FragmentFavoritesBinding by viewBinding(FragmentFavoritesBinding::bind)
 
@@ -61,7 +65,7 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
     }
 
     private fun onMovieClick(movieId: Long) {
-        App.INSTANCE.router.navigateTo(movieDetails(movieId))
+        router.navigateTo(DetailsScreen(movieId))
     }
 
     private fun showItems(favoriteMovies: List<Movie>, banners: List<Banner>) {

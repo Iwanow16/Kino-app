@@ -3,13 +3,21 @@ package kinomaxi
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.NavigatorHolder
+import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
-import kinomaxi.app.App
 import kinomaxi.databinding.ActivityMainBinding
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
+    @Inject
+    lateinit var router: Router
+
+    @Inject
+    lateinit var navigatorHolder: NavigatorHolder
 
     private val navigator = AppNavigator(this, R.id.container)
 
@@ -30,18 +38,17 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onResumeFragments() {
         super.onResumeFragments()
-        App.INSTANCE.navigatorHolder.setNavigator(navigator)
+        navigatorHolder.setNavigator(navigator)
     }
 
     override fun onPause() {
-        App.INSTANCE.navigatorHolder.removeNavigator()
+        navigatorHolder.removeNavigator()
         super.onPause()
     }
 
     override fun onSupportNavigateUp(): Boolean {
         if (!super.onSupportNavigateUp()) {
-            //onBackPressedDispatcher.onBackPressed()
-            App.INSTANCE.router.exit()
+            router.exit()
         }
         return true
     }

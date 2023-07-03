@@ -10,11 +10,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
-import kinomaxi.Screens.favorites
-import kinomaxi.Screens.movieDetails
-import kinomaxi.app.App
+import kinomaxi.Screens.DetailsScreen
+import kinomaxi.Screens.FavoriteScreen
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
 import kinomaxi.databinding.LayoutMoviesListBinding
@@ -26,9 +26,13 @@ import kinomaxi.feature.movieList.view.MoviesListAdapter
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainPageFragment : Fragment(R.layout.fragment_main_page) {
+
+    @Inject
+    lateinit var router: Router
 
     private val viewBinding: FragmentMainPageBinding by viewBinding(FragmentMainPageBinding::bind)
 
@@ -39,7 +43,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
         with(viewBinding) {
             favoritesButton.setOnClickListener {
-                App.INSTANCE.router.navigateTo(favorites())
+                router.navigateTo(FavoriteScreen())
             }
             errorView.setOnInflateListener { _, inflated ->
                 with(LayoutErrorViewBinding.bind(inflated)) {
@@ -64,7 +68,7 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     }
 
     private fun onMovieClick(movieId: Long) {
-        App.INSTANCE.router.navigateTo(movieDetails(movieId))
+        router.navigateTo(DetailsScreen(movieId))
     }
 
     private fun showNewState(state: MainPageState) {
