@@ -1,8 +1,13 @@
 package kinomaxi.feature.mainPage.view
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.Screens.DetailsScreen
 import kinomaxi.Screens.FavoriteScreen
+import kinomaxi.Screens.LoginScreen
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
 import kinomaxi.databinding.LayoutMoviesListBinding
@@ -65,7 +71,24 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                 }
             }
         }
+
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
+                R.id.button_account -> {
+                    router.navigateTo(LoginScreen())
+                    true
+                }
+
+                else -> false
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
+
 
     private fun onMovieClick(movieId: Long) {
         router.navigateTo(DetailsScreen(movieId))
