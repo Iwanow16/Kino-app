@@ -29,8 +29,6 @@ class NetworkModule {
                     .build()
                 val request = chain.request().newBuilder()
                     .url(url)
-                    .addHeader("accept", "application/json")
-                    .addHeader("content-type", "application/json")
                     .addHeader("Authorization", "Bearer $bearerToken")
                     .build()
                 chain.proceed(request)

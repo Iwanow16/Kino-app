@@ -20,10 +20,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.Screens.DetailsScreen
 import kinomaxi.Screens.FavoriteScreen
-import kinomaxi.Screens.LoginScreen
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
 import kinomaxi.databinding.LayoutMoviesListBinding
+import kinomaxi.feature.loginPage.view.LoginPageFragment
 import kinomaxi.feature.movieList.model.Movie
 import kinomaxi.feature.movieList.model.MoviesList
 import kinomaxi.feature.movieList.model.MoviesListType
@@ -80,7 +80,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
                 R.id.button_account -> {
-                    router.navigateTo(LoginScreen())
+                    //router.navigateTo(LoginScreen())
+                    LoginPageFragment().show(childFragmentManager, "Login")
                     true
                 }
 
