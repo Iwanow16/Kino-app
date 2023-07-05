@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
     private val getMoviesList: GetMoviesListUseCase,
-    private val dataStoreRepository: DataStoreRepository
+    dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
     val sessionId: StateFlow<String> = dataStoreRepository.sessionPreferencesFlow
@@ -36,7 +36,7 @@ class MainPageViewModel @Inject constructor(
     val viewState: Flow<MainPageState> = combine(
         _viewState.asStateFlow(),
         sessionId
-    ) { viewState: MainPageState, sesssionId: String ->
+    ) { viewState: MainPageState, sessionId: String ->
         viewState
     }.onStart { loadData() }.stateIn(
         viewModelScope,

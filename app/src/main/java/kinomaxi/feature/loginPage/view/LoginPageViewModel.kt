@@ -38,7 +38,7 @@ class LoginPageViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val sessionId = getSessionId.await()
-                dataStoreRepository.setSessionId(sessionId)
+                dataStoreRepository.saveSessionId(sessionId)
                 _viewState.value = LoginPageViewState.Success(sessionId)
             } catch (e: Exception) {
                 _viewState.value = LoginPageViewState.Error
