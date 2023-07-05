@@ -13,7 +13,7 @@ interface LoginApiService {
     suspend fun getRequestToken(): RestRequestToken
 
     @POST("authentication/token/validate_with_login")
-    suspend fun confirmSessionWithLogin(@Body restBody: RestBody)
+    suspend fun confirmSessionWithLogin(@Body restBody: RestBodySessionLogin)
 
     @POST("authentication/session/new")
     suspend fun createSession(@Body restBodyRequestToken: RestRequestToken): RestSessionId

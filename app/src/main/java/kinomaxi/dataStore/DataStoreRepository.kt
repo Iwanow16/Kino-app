@@ -1,8 +1,8 @@
 package kinomaxi.dataStore
 
 import android.content.Context
+import android.util.Log
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
@@ -11,25 +11,23 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
+import java.io.IOException
+import javax.inject.Inject
 
-data class StingPreferences(val sessionId: String)
-
-private const val SESSION_PREFERENCES_NAME = "session_preferences"
-
-private val Context.dataStore by preferencesDataStore(
-    name = SESSION_PREFERENCES_NAME
-)
+private const val SESSION_ID_KEY = "SESSION_ID_KEY"
 
 private object PreferencesKeys {
     val SESSION_ID = stringPreferencesKey("session_id")
 }
 
-class SessionPreferencesRepository(
-    private val dataStore: DataStore<Preferences>,
+class DataStoreRepository @Inject constructor(
     context: Context
 ) {
 
-    val userPreferencesFlow: Flow<StingPreferences> = dataStore.data
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = SESSION_ID_KEY)
+    private val dataStore = context.dataStore
+
+    val sessionPreferencesFlow: Flow<String> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -37,11 +35,18 @@ class SessionPreferencesRepository(
                 throw exception
             }
         }.map { preferences ->
-            val showCompleted = preferences[PreferencesKeys.SESSION_ID]?: ""
-            StingPreferences(showCompleted)
+            val sessionId = preferences[PreferencesKeys.SESSION_ID] ?: ""
+            sessionId
         }
 
-    suspend fun updateShowCompleted(sessionId: String) {
+    suspend fun getSessionId() {
+        dataStore.data.collect {preferences ->
+            val sessionId: String? = preferences[PreferencesKeys.SESSION_ID]
+            Log.d("getSessionId", sessionId.toString())
+        }
+    }
+
+    suspend fun setSessionId(sessionId: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SESSION_ID] = sessionId
         }

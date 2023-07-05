@@ -88,7 +88,6 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-
     private fun onMovieClick(movieId: Long) {
         router.navigateTo(DetailsScreen(movieId))
     }

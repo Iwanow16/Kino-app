@@ -1,8 +1,7 @@
 package kinomaxi.feature.loginPage.domain
 
-import android.util.Log
 import kinomaxi.feature.loginPage.data.LoginApiService
-import kinomaxi.feature.loginPage.data.RestBody
+import kinomaxi.feature.loginPage.data.RestBodySessionLogin
 import kinomaxi.feature.loginPage.data.RestRequestToken
 import javax.inject.Inject
 
@@ -14,7 +13,7 @@ class GetSessionIdUseCase @Inject constructor(
         password: String,
         requestToken: String,
     ) {
-        apiService.confirmSessionWithLogin(RestBody(username, password, requestToken))
+        apiService.confirmSessionWithLogin(RestBodySessionLogin(username, password, requestToken))
     }
 
     suspend operator fun invoke(

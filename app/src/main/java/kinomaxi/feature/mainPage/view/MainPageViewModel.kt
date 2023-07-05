@@ -3,6 +3,7 @@ package kinomaxi.feature.mainPage.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kinomaxi.dataStore.DataStoreRepository
 import kinomaxi.feature.movieList.domain.GetMoviesListUseCase
 import kinomaxi.feature.movieList.model.MoviesListType
 import kotlinx.coroutines.async
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
     private val getMoviesList: GetMoviesListUseCase,
+    private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
     private var _viewState = MutableStateFlow<MainPageState>(MainPageState.Loading)
