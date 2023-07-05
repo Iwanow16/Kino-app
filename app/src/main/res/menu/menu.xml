@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-<item
-    android:id="@+id/button_account"
-    android:title="Аккаунт"
-    android:icon="@drawable/ic_account_circle_24"
-    app:showAsAction="ifRoom"
-    />
+    <item
+        android:id="@+id/button_login"
+        android:icon="@drawable/ic_account_circle_24"
+        android:title="Логин"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/button_account"
+        android:icon="@drawable/ic_account_circle_24"
+        android:title="Аккаунт"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
 </menu>

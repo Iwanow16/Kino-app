@@ -9,13 +9,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
+import kinomaxi.Screens.AccountScreen
 import kinomaxi.databinding.FragmentLoginPageBinding
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LoginPageFragment : DialogFragment(R.layout.fragment_login_page) {
+
+    @Inject
+    lateinit var router: Router
 
     private val viewBinding: FragmentLoginPageBinding by viewBinding(FragmentLoginPageBinding::bind)
 
@@ -51,6 +57,7 @@ class LoginPageFragment : DialogFragment(R.layout.fragment_login_page) {
             }
             is LoginPageViewState.Success -> {
                 viewBinding.errorText.visibility = View.INVISIBLE
+                router.navigateTo(AccountScreen())
                 dialog?.dismiss()
             }
         }

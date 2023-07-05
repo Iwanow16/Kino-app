@@ -17,6 +17,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
+import kinomaxi.Screens
 import kinomaxi.Screens.DetailsScreen
 import kinomaxi.Screens.FavoriteScreen
 import kinomaxi.databinding.FragmentMainPageBinding
@@ -76,15 +77,35 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                 menuInflater.inflate(R.menu.menu, menu)
             }
 
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
-                R.id.button_account -> {
-                    //router.navigateTo(LoginScreen())
-                    LoginPageFragment().show(childFragmentManager, "Login")
-                    true
-                }
+            override fun onPrepareMenu(menu: Menu) {
+                super.onPrepareMenu(menu)
+                val loginButton = menu.findItem(R.id.button_login)
+                val accountButton = menu.findItem(R.id.button_account)
 
-                else -> false
+                if (viewModel.sessionId.value == "") {
+                    loginButton.isVisible = true
+                    accountButton.isVisible = false
+                } else {
+                    loginButton.isVisible = false
+                    accountButton.isVisible = true
+                }
             }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
+                when (menuItem.itemId) {
+                    R.id.button_login -> {
+                        //router.navigateTo(LoginScreen())
+                        LoginPageFragment().show(childFragmentManager, "Login")
+                        true
+                    }
+
+                    R.id.button_account -> {
+                        router.navigateTo(Screens.AccountScreen())
+                        true
+                    }
+
+                    else -> false
+                }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 

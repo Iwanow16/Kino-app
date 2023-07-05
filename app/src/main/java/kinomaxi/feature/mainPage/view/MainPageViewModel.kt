@@ -11,8 +11,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.onSubscription
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,14 +25,24 @@ class MainPageViewModel @Inject constructor(
     private val dataStoreRepository: DataStoreRepository
 ) : ViewModel() {
 
-    private var _viewState = MutableStateFlow<MainPageState>(MainPageState.Loading)
-    val viewState: Flow<MainPageState> = _viewState.asStateFlow()
-        .onSubscription { loadData() }
+    val sessionId: StateFlow<String> = dataStoreRepository.sessionPreferencesFlow
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(),
-            _viewState.value
+            ""
         )
+
+    private var _viewState = MutableStateFlow<MainPageState>(MainPageState.Loading)
+    val viewState: Flow<MainPageState> = combine(
+        _viewState.asStateFlow(),
+        sessionId
+    ) { viewState: MainPageState, sesssionId: String ->
+        viewState
+    }.onStart { loadData() }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(),
+        _viewState.value
+    )
 
     fun refreshData() {
         _viewState.value = MainPageState.Loading
@@ -38,9 +50,11 @@ class MainPageViewModel @Inject constructor(
     }
 
     private fun loadData() {
-        val getTopRatedMovies = viewModelScope.async { getMoviesList(MoviesListType.TOP_RATED_MOVIES) }
+        val getTopRatedMovies =
+            viewModelScope.async { getMoviesList(MoviesListType.TOP_RATED_MOVIES) }
         val getPopularMovies = viewModelScope.async { getMoviesList(MoviesListType.POPULAR_MOVIES) }
-        val getUpcomingMovies = viewModelScope.async { getMoviesList(MoviesListType.UPCOMING_MOVIES) }
+        val getUpcomingMovies =
+            viewModelScope.async { getMoviesList(MoviesListType.UPCOMING_MOVIES) }
         viewModelScope.launch {
             try {
                 val (topRatedMovies, popularMovies, upcomingMovies) = listOf(

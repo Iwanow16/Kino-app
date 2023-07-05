@@ -1,7 +1,6 @@
 package kinomaxi.dataStore
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -38,13 +37,6 @@ class DataStoreRepository @Inject constructor(
             val sessionId = preferences[PreferencesKeys.SESSION_ID] ?: ""
             sessionId
         }
-
-    suspend fun getSessionId() {
-        dataStore.data.collect {preferences ->
-            val sessionId: String? = preferences[PreferencesKeys.SESSION_ID]
-            Log.d("getSessionId", sessionId.toString())
-        }
-    }
 
     suspend fun setSessionId(sessionId: String) {
         dataStore.edit { preferences ->
