@@ -13,3 +13,9 @@ data class RestSessionId(
 data class RestGuestSessionId(
     @SerializedName("guest_session_id") val guestSessionId: String
 )
+
+data class RestBody(
+    @SerializedName("username") val username: String,
+    @SerializedName("password") val password: String,
+    @SerializedName("request_token") val requestToken: String
+)

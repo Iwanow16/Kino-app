@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kinomaxi.feature.loginPage.data.LoginApiService
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieList.data.MoviesListApiService
 import okhttp3.OkHttpClient
@@ -47,6 +48,12 @@ class NetworkModule {
             .baseUrl(baseURL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideLoginApiService(retrofit: Retrofit): LoginApiService {
+        return retrofit.create(LoginApiService::class.java)
     }
 
     @Provides

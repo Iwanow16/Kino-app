@@ -19,17 +19,26 @@
             android:id="@+id/loginText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
             android:text="Login"
             android:textAlignment="center"
             android:textColor="#4169e1"
             android:textSize="36sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/errorText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ошибка входа"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            android:visibility="invisible" />
+
         <EditText
             android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="40dp"
             android:drawablePadding="8dp"
             android:hint="Username"
             android:padding="8dp"

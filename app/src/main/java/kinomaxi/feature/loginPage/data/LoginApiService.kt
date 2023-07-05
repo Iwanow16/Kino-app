@@ -1,26 +1,20 @@
 package kinomaxi.feature.loginPage.data
 
-import retrofit2.http.Field
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface LoginApiService {
 
     @GET("authentication/guest_session/new")
-    fun createGuestSession(): RestGuestSessionId
+    suspend fun createGuestSession(): RestGuestSessionId
 
     @GET("authentication/token/new")
-    fun getRequestToken(): RestRequestToken
+    suspend fun getRequestToken(): RestRequestToken
 
     @POST("authentication/token/validate_with_login")
-    fun createSessionWithLogin(
-        @Field("username") username: String,
-        @Field("password") password: String,
-        @Field("request_token") requestToken: String
-    )
+    suspend fun confirmSessionWithLogin(@Body restBody: RestBody)
 
-    @POST("authentication/token/validate_with_login")
-    fun createSession(
-        @Field("request_token") requestToken: String
-    ): RestSessionId
+    @POST("authentication/session/new")
+    suspend fun createSession(@Body restBodyRequestToken: RestRequestToken): RestSessionId
 }
