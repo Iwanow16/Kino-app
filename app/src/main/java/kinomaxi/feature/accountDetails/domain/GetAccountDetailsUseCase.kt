@@ -1,5 +1,6 @@
 package kinomaxi.feature.accountDetails.domain
 
+import kinomaxi.AppConfig
 import kinomaxi.feature.accountDetails.data.AccountDetailsApiServers
 import kinomaxi.feature.accountDetails.data.RestAccountDetails
 import kinomaxi.feature.accountDetails.model.AccountAvatar
@@ -26,7 +27,7 @@ private fun RestAccountDetails.toEntity(): AccountDetails =
         includeAdult = includeAdult,
         username = username,
         avatar = AccountAvatar(
-            hash = "",
-            avatarPath = ""
+            hash = avatar.hash.hash,
+            avatarPath = "${AppConfig.IMAGE_BASE_URL}original${avatar.avatar_path.avatar_path}"
         )
     )

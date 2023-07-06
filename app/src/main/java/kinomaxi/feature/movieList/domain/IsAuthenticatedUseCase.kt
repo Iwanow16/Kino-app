@@ -10,5 +10,5 @@ class IsAuthenticatedUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<Boolean> =
         dataStoreRepository.sessionPreferencesFlow
-            .map { it.isNullOrEmpty() }
+            .map { !it.isNullOrEmpty() }
 }

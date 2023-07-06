@@ -28,6 +28,7 @@ class NetworkModule {
             .addInterceptor { chain ->
                 val url = chain.request().url.newBuilder()
                     .addQueryParameter("language", "ru")
+                    .addQueryParameter("session_id", "")
                     .build()
                 val request = chain.request().newBuilder()
                     .url(url)

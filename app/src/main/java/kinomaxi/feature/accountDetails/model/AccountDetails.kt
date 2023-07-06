@@ -12,3 +12,8 @@ data class AccountDetails(
     val username: String,
     val avatar: AccountAvatar?
 )
+
+data class AccountAvatar(
+    val hash: String,
+    val avatarPath: String
+)
