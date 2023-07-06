@@ -38,6 +38,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
     private val viewModel: MainPageViewModel by viewModels()
 
+    private val menuProvider by lazy { MainPageMenuProvider(router, childFragmentManager) }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,11 +62,12 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.viewState.collect {
-                    showNewState(it)
-                }
+                launch { viewModel.viewState.collect(::showNewState) }
+                launch { viewModel.isUserAuthenticated.collect(menuProvider::updateMenu) }
             }
         }
+
+        requireActivity().addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun onMovieClick(movieId: Long) {
