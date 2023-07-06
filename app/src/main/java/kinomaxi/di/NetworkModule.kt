@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kinomaxi.feature.accountDetails.data.AccountDetailsApiServers
 import kinomaxi.feature.loginPage.data.LoginApiService
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieList.data.MoviesListApiService
@@ -66,5 +67,11 @@ class NetworkModule {
     @Singleton
     fun provideDetailApiService(retrofit: Retrofit): MovieDetailsApiService {
         return retrofit.create(MovieDetailsApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAccountDetailApiService(retrofit: Retrofit): AccountDetailsApiServers {
+        return retrofit.create(AccountDetailsApiServers::class.java)
     }
 }

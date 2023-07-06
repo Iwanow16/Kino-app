@@ -1,12 +1,8 @@
 package kinomaxi.feature.mainPage.view
 
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import androidx.annotation.StringRes
-import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,13 +13,11 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
-import kinomaxi.Screens
 import kinomaxi.Screens.DetailsScreen
 import kinomaxi.Screens.FavoriteScreen
 import kinomaxi.databinding.FragmentMainPageBinding
 import kinomaxi.databinding.LayoutErrorViewBinding
 import kinomaxi.databinding.LayoutMoviesListBinding
-import kinomaxi.feature.loginPage.view.LoginPageFragment
 import kinomaxi.feature.movieList.model.Movie
 import kinomaxi.feature.movieList.model.MoviesList
 import kinomaxi.feature.movieList.model.MoviesListType
@@ -43,6 +37,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
     private val viewBinding: FragmentMainPageBinding by viewBinding(FragmentMainPageBinding::bind)
 
     private val viewModel: MainPageViewModel by viewModels()
+
+    private val menuProvider by lazy { MainPageMenuProvider(router, childFragmentManager) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -66,47 +62,12 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.viewState.collect {
-                    showNewState(it)
-                }
+                launch { viewModel.viewState.collect(::showNewState) }
+                launch { viewModel.isUserAuthenticated.collect(menuProvider::updateMenu) }
             }
         }
 
-        requireActivity().addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu, menu)
-            }
-
-            override fun onPrepareMenu(menu: Menu) {
-                super.onPrepareMenu(menu)
-                val loginButton = menu.findItem(R.id.button_login)
-                val accountButton = menu.findItem(R.id.button_account)
-
-                if (viewModel.sessionId.value == "") {
-                    loginButton.isVisible = true
-                    accountButton.isVisible = false
-                } else {
-                    loginButton.isVisible = false
-                    accountButton.isVisible = true
-                }
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-                when (menuItem.itemId) {
-                    R.id.button_login -> {
-                        //router.navigateTo(LoginScreen())
-                        LoginPageFragment().show(childFragmentManager, "Login")
-                        true
-                    }
-
-                    R.id.button_account -> {
-                        router.navigateTo(Screens.AccountScreen())
-                        true
-                    }
-
-                    else -> false
-                }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        requireActivity().addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun onMovieClick(movieId: Long) {

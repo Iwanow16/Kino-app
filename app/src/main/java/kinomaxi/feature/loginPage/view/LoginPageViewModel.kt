@@ -3,7 +3,7 @@ package kinomaxi.feature.loginPage.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kinomaxi.dataStore.DataStoreRepository
+import kinomaxi.feature.authFeature.AuthDataStore
 import kinomaxi.feature.loginPage.domain.GetRequestTokenUseCase
 import kinomaxi.feature.loginPage.domain.GetSessionIdUseCase
 import kotlinx.coroutines.async
@@ -19,7 +19,7 @@ import javax.inject.Inject
 class LoginPageViewModel @Inject constructor(
     private val getRequestTokenUseCase: GetRequestTokenUseCase,
     private val getSessionIdUseCase: GetSessionIdUseCase,
-    private val dataStoreRepository: DataStoreRepository
+    private val dataStoreRepository: AuthDataStore
 ) : ViewModel() {
 
     private var _viewState = MutableStateFlow<LoginPageViewState>(LoginPageViewState.Loading)

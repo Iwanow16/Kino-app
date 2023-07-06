@@ -1,4 +1,4 @@
-package kinomaxi.dataStore
+package kinomaxi.feature.authFeature
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -22,14 +22,14 @@ private object PreferencesKeys {
 }
 
 @Singleton
-class DataStoreRepository @Inject constructor(
+class AuthDataStore @Inject constructor(
     @ApplicationContext context: Context
 ) {
 
     private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = SESSION_ID_KEY)
     private val dataStore = context.dataStore
 
-    val sessionPreferencesFlow: Flow<String> = dataStore.data
+    val sessionPreferencesFlow: Flow<String?> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -37,13 +37,18 @@ class DataStoreRepository @Inject constructor(
                 throw exception
             }
         }.map { preferences ->
-            val sessionId = preferences[PreferencesKeys.SESSION_ID] ?: ""
-            sessionId
+            preferences[PreferencesKeys.SESSION_ID]
         }
 
     suspend fun saveSessionId(sessionId: String) {
         dataStore.edit { preferences ->
             preferences[PreferencesKeys.SESSION_ID] = sessionId
+        }
+    }
+
+    suspend fun removeSessionId() {
+        dataStore.edit { preferences ->
+            preferences[PreferencesKeys.SESSION_ID] = ""
         }
     }
 }

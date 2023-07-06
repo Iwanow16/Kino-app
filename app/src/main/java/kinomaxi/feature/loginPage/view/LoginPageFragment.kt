@@ -12,7 +12,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
-import kinomaxi.Screens.AccountScreen
 import kinomaxi.databinding.FragmentLoginPageBinding
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -57,8 +56,7 @@ class LoginPageFragment : DialogFragment(R.layout.fragment_login_page) {
             }
             is LoginPageViewState.Success -> {
                 viewBinding.errorText.visibility = View.INVISIBLE
-                router.navigateTo(AccountScreen())
-                dialog?.dismiss()
+                router.exit()
             }
         }
     }
