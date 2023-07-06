@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kinomaxi.feature.accountDetails.domain.DeleteSessionUseCase
 import kinomaxi.feature.accountDetails.domain.GetAccountDetailsUseCase
 import kinomaxi.feature.authFeature.AuthDataStore
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountDetailsViewModel @Inject constructor(
     private val getAccountDetailsUseCase: GetAccountDetailsUseCase,
+    private val deleteSessionUseCase: DeleteSessionUseCase,
     private val dataStoreRepository: AuthDataStore
 ) : ViewModel() {
 
@@ -34,6 +36,7 @@ class AccountDetailsViewModel @Inject constructor(
     fun removeSession() {
         viewModelScope.launch {
             dataStoreRepository.removeSessionId()
+            deleteSessionUseCase("")
         }
     }
 

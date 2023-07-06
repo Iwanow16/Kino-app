@@ -2,6 +2,7 @@ package kinomaxi.feature.accountDetails.view
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -34,7 +35,7 @@ class AccountDetailsFragment: Fragment(R.layout.fragment_account_details) {
             }
         }
 
-        viewBinding.deleteSessionButton.setOnClickListener {
+        viewBinding.removeSessionButton.setOnClickListener {
             viewModel.removeSession()
             router.exit()
         }
@@ -43,16 +44,24 @@ class AccountDetailsFragment: Fragment(R.layout.fragment_account_details) {
     private fun showNewState(state: AccountDetailsViewState) {
         when (state) {
             AccountDetailsViewState.Loading -> with(viewBinding) {
-                username.text = "loading"
+                contentAccountView.isVisible = false
+                loaderView.show()
+                errorView.isVisible = false
             }
             AccountDetailsViewState.Error -> with(viewBinding) {
-                username.text = "error"
+                contentAccountView.isVisible = false
+                loaderView.hide()
+                errorView.isVisible = true
             }
             is AccountDetailsViewState.Success -> with(viewBinding) {
-                username.text = state.accountDetails.username
+                contentAccountView.isVisible = true
+                loaderView.hide()
+                errorView.isVisible = false
+
+                accountDetailsLayout.username.text = state.accountDetails.username
                 Glide.with(this@AccountDetailsFragment)
                     .load(state.accountDetails.avatar?.avatarPath)
-                    .into(avatar)
+                    .into(accountImageLayout.accountImage)
             }
         }
     }

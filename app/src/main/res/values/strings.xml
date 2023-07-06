@@ -16,4 +16,5 @@
     <string name="favorite_movies_list_title">Избранное</string>
     <string name="empty_favorites">Добавляйте фильмы в избранное, и они появятся на этом экране</string>
 
+    <string name="account_remove_session_button">Удалить сессию</string>
 </resources>
