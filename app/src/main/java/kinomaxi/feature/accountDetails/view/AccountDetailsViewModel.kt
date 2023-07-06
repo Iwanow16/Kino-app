@@ -14,7 +14,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AccountDetailsViewModel @Inject constructor(
-
 ) : ViewModel() {
 
     private var _viewState =

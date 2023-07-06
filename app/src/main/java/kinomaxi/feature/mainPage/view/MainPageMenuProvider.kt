@@ -1,6 +1,5 @@
 package kinomaxi.feature.mainPage.view
 
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -22,14 +21,12 @@ class MainPageMenuProvider(
     private var isAuth: Boolean = false
 
     fun updateMenu(isUserAuth: Boolean) {
-        Log.d("TEST", isUserAuth.toString())
         loginButton?.isVisible = !isUserAuth
         accountButton?.isVisible = isUserAuth
         isAuth = isUserAuth
     }
 
     override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-        Log.d("TEST", "onCreateMenu")
         menuInflater.inflate(R.menu.menu, menu)
         loginButton = menu.findItem(R.id.button_login)
         accountButton = menu.findItem(R.id.button_account)
@@ -39,7 +36,6 @@ class MainPageMenuProvider(
     override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
         when (menuItem.itemId) {
             R.id.button_login -> {
-                //router.navigateTo(LoginScreen())
                 LoginPageFragment().show(childFragmentManager, "Login")
                 true
             }

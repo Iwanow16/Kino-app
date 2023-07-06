@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.authFeature.AuthDataStore
 import kinomaxi.feature.loginPage.domain.GetRequestTokenUseCase
 import kinomaxi.feature.loginPage.domain.GetSessionIdUseCase
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,13 +30,10 @@ class LoginPageViewModel @Inject constructor(
         )
 
     fun createSession(username: String, password: String) {
-        val getRequestToken = viewModelScope.async { getRequestTokenUseCase() }
-        val getSessionId = viewModelScope.async {
-            getSessionIdUseCase(username, password, getRequestToken.await())
-        }
         viewModelScope.launch {
             try {
-                val sessionId = getSessionId.await()
+                val requestToken = getRequestTokenUseCase()
+                val sessionId = getSessionIdUseCase(username, password, requestToken)
                 dataStoreRepository.saveSessionId(sessionId)
                 _viewState.value = LoginPageViewState.Success(sessionId)
             } catch (e: Exception) {

@@ -48,7 +48,7 @@ class AuthDataStore @Inject constructor(
 
     suspend fun removeSessionId() {
         dataStore.edit { preferences ->
-            preferences[PreferencesKeys.SESSION_ID] = ""
+            preferences.remove(PreferencesKeys.SESSION_ID)
         }
     }
 }

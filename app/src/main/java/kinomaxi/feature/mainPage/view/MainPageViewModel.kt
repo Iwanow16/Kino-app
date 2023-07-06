@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.movieList.domain.GetMoviesListUseCase
-import kinomaxi.feature.movieList.domain.IsAuthenticationUseCase
+import kinomaxi.feature.movieList.domain.IsAuthenticatedUseCase
 import kinomaxi.feature.movieList.model.MoviesListType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -12,7 +12,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -21,18 +20,10 @@ import javax.inject.Inject
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
     private val getMoviesList: GetMoviesListUseCase,
-    isAuthenticationUseCase: IsAuthenticationUseCase
+    isAuthenticationUseCase: IsAuthenticatedUseCase
 ) : ViewModel() {
 
-    private val sessionId: Flow<String?> = isAuthenticationUseCase()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(),
-            ""
-        )
-
-    val isUserAuthenticated: Flow<Boolean> = sessionId
-        .map { !it.isNullOrEmpty() }
+    val isUserAuthenticated: Flow<Boolean> = isAuthenticationUseCase()
 
     private var _viewState = MutableStateFlow<MainPageState>(MainPageState.Loading)
     val viewState: Flow<MainPageState> =
