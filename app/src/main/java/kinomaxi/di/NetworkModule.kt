@@ -5,6 +5,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kinomaxi.feature.accountDetails.data.AccountDetailsApiServers
+import kinomaxi.feature.accountDetails.data.ClientSessionInterceptor
+import kinomaxi.feature.accountDetails.data.SessionExpiredInterceptor
 import kinomaxi.feature.loginPage.data.LoginApiService
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieList.data.MoviesListApiService
@@ -23,12 +25,14 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(): OkHttpClient {
+    fun provideHttpClient(
+        clientSessionInterceptor: ClientSessionInterceptor,
+        sessionExpiredInterceptor: SessionExpiredInterceptor
+    ): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
                 val url = chain.request().url.newBuilder()
                     .addQueryParameter("language", "ru")
-                    .addQueryParameter("session_id", "")
                     .build()
                 val request = chain.request().newBuilder()
                     .url(url)
@@ -39,6 +43,8 @@ class NetworkModule {
             .addInterceptor(HttpLoggingInterceptor().apply {
                 setLevel(HttpLoggingInterceptor.Level.BODY)
             })
+            .addInterceptor(sessionExpiredInterceptor)
+            .addInterceptor(clientSessionInterceptor)
             .build()
     }
 

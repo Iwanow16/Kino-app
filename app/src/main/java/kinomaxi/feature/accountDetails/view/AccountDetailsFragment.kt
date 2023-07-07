@@ -18,12 +18,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class AccountDetailsFragment: Fragment(R.layout.fragment_account_details) {
+class AccountDetailsFragment : Fragment(R.layout.fragment_account_details) {
 
     @Inject
     lateinit var router: Router
 
-    private val viewBinding: FragmentAccountDetailsBinding by viewBinding(FragmentAccountDetailsBinding::bind)
+    private val viewBinding: FragmentAccountDetailsBinding by viewBinding(
+        FragmentAccountDetailsBinding::bind
+    )
     private val viewModel: AccountDetailsViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,7 +39,6 @@ class AccountDetailsFragment: Fragment(R.layout.fragment_account_details) {
 
         viewBinding.removeSessionButton.setOnClickListener {
             viewModel.removeSession()
-            router.exit()
         }
     }
 
@@ -48,19 +49,24 @@ class AccountDetailsFragment: Fragment(R.layout.fragment_account_details) {
                 loaderView.show()
                 errorView.isVisible = false
             }
+
             AccountDetailsViewState.Error -> with(viewBinding) {
                 contentAccountView.isVisible = false
                 loaderView.hide()
                 errorView.isVisible = true
             }
+
             is AccountDetailsViewState.Success -> with(viewBinding) {
                 contentAccountView.isVisible = true
                 loaderView.hide()
                 errorView.isVisible = false
 
                 accountDetailsLayout.username.text = state.accountDetails.username
+                accountDetailsLayout.country.text = state.accountDetails.country
+
                 Glide.with(this@AccountDetailsFragment)
-                    .load(state.accountDetails.avatar?.avatarPath)
+                    .load(state.accountDetails.avatar.avatarPath)
+                    .centerCrop()
                     .into(accountImageLayout.accountImage)
             }
         }

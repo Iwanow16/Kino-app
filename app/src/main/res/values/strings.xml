@@ -17,4 +17,6 @@
     <string name="empty_favorites">Добавляйте фильмы в избранное, и они появятся на этом экране</string>
 
     <string name="account_remove_session_button">Удалить сессию</string>
+
+    <string name="account_country_description">Страна:</string>
 </resources>

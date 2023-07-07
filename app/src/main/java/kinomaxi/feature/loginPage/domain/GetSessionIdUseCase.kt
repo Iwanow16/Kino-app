@@ -1,12 +1,14 @@
 package kinomaxi.feature.loginPage.domain
 
+import kinomaxi.feature.authFeature.AuthDataStore
 import kinomaxi.feature.loginPage.data.LoginApiService
 import kinomaxi.feature.loginPage.data.RestBodySessionLogin
 import kinomaxi.feature.loginPage.data.RestRequestToken
 import javax.inject.Inject
 
 class GetSessionIdUseCase @Inject constructor(
-    private val apiService: LoginApiService
+    private val apiService: LoginApiService,
+    private val dataStore: AuthDataStore
 ) {
     private suspend fun confirmSession(
         username: String,
@@ -22,6 +24,10 @@ class GetSessionIdUseCase @Inject constructor(
         requestToken: String,
     ): String {
         confirmSession(username, password, requestToken)
-        return apiService.createSession(RestRequestToken(requestToken)).sessionId
+
+        val sessionId = apiService.createSession(RestRequestToken(requestToken)).sessionId
+        dataStore.saveSessionId(sessionId)
+
+        return sessionId
     }
 }

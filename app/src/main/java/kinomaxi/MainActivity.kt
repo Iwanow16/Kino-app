@@ -1,20 +1,25 @@
 package kinomaxi
 
 import android.os.Bundle
-import android.view.MenuItem
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.NavigatorHolder
 import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.databinding.ActivityMainBinding
+import kinomaxi.feature.authFeature.AuthDataStore
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
+
+    @Inject
+    lateinit var authDataStore: AuthDataStore
 
     @Inject
     lateinit var router: Router
@@ -36,6 +41,16 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             val showBackButton = supportFragmentManager.backStackEntryCount > 0
             supportActionBar?.setDisplayHomeAsUpEnabled(showBackButton)
             supportActionBar?.setDisplayShowHomeEnabled(!showBackButton)
+        }
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    authDataStore.sessionPreferencesFlow.collect {
+                        it ?: router.backTo(null)
+                    }
+                }
+            }
         }
     }
 
