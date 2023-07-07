@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.movieList.domain.GetMoviesListUseCase
-import kinomaxi.feature.movieList.domain.IsAuthenticatedUseCase
+import kinomaxi.feature.auth.IsAuthenticatedUseCase
 import kinomaxi.feature.movieList.model.MoviesListType
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll

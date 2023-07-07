@@ -14,7 +14,7 @@ data class RestAccountDetails(
 
 data class RestAccountAvatar(
     @SerializedName("gravatar") val gravatar: RestHash,
-    @SerializedName("tmdb") val tmdb_avatar: RestAvatarPath,
+    @SerializedName("tmdb") val tmdbAvatar: RestAvatarPath,
 )
 
 data class RestHash(
@@ -22,5 +22,5 @@ data class RestHash(
 )
 
 data class RestAvatarPath(
-    @SerializedName("avatar_path") val avatar_path: String?,
+    @SerializedName("avatar_path") val avatarPath: String?,
 )

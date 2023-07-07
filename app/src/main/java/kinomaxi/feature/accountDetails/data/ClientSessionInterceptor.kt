@@ -1,6 +1,6 @@
 package kinomaxi.feature.accountDetails.data
 
-import kinomaxi.feature.authFeature.AuthDataStore
+import kinomaxi.feature.auth.AuthDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -21,14 +21,15 @@ class ClientSessionInterceptor @Inject constructor(
         .stateIn(
             scope,
             SharingStarted.Eagerly,
-            "NO_SESSION_ID"
+            null
         )
 
     override fun intercept(chain: Interceptor.Chain): Response {
-        val url = chain.request().url
-            .newBuilder()
-            .addQueryParameter("session_id", sessionId.value)
-            .build()
+        var url = chain.request().url
+        if (!sessionId.value.isNullOrEmpty())
+            url = url.newBuilder()
+                .addQueryParameter("session_id", sessionId.value)
+                .build()
         val request = chain.request().newBuilder()
             .url(url)
             .build()

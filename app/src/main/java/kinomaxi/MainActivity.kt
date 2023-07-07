@@ -1,6 +1,7 @@
 package kinomaxi
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -11,15 +12,12 @@ import com.github.terrakok.cicerone.Router
 import com.github.terrakok.cicerone.androidx.AppNavigator
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.databinding.ActivityMainBinding
-import kinomaxi.feature.authFeature.AuthDataStore
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
-
-    @Inject
-    lateinit var authDataStore: AuthDataStore
 
     @Inject
     lateinit var router: Router
@@ -30,6 +28,8 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     private val navigator = AppNavigator(this, R.id.container)
 
     private val viewBinding: ActivityMainBinding by viewBinding(ActivityMainBinding::bind)
+
+    private val viewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,9 +46,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 launch {
-                    authDataStore.sessionPreferencesFlow.collect {
-                        it ?: router.backTo(null)
-                    }
+                    viewModel.isAuth
+                        .filter(Boolean::not)
+                        .collect { router.backTo(null) }
                 }
             }
         }

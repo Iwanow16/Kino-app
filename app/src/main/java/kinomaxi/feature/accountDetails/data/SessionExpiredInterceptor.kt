@@ -1,6 +1,6 @@
 package kinomaxi.feature.accountDetails.data
 
-import kinomaxi.feature.authFeature.AuthDataStore
+import kinomaxi.feature.auth.AuthDataStore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

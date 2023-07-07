@@ -28,6 +28,6 @@ private fun RestAccountDetails.toEntity(): AccountDetails =
         username = username,
         avatar = AccountAvatar(
             hash = "${AppConfig.GRAVATAR_URL}avatar/${avatar.gravatar.hash}?s=204&d=404",
-            avatarPath = "${AppConfig.IMAGE_BASE_URL}original${avatar.tmdb_avatar.avatar_path}"
+            avatarPath = "${AppConfig.IMAGE_BASE_URL}original${avatar.tmdbAvatar.avatarPath}"
         )
     )

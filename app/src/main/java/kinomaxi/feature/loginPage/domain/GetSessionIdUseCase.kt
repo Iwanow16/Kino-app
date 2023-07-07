@@ -1,6 +1,6 @@
 package kinomaxi.feature.loginPage.domain
 
-import kinomaxi.feature.authFeature.AuthDataStore
+import kinomaxi.feature.auth.AuthDataStore
 import kinomaxi.feature.loginPage.data.LoginApiService
 import kinomaxi.feature.loginPage.data.RestBodySessionLogin
 import kinomaxi.feature.loginPage.data.RestRequestToken
