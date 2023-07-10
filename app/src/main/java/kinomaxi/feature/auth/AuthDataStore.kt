@@ -1,4 +1,4 @@
-package kinomaxi.feature.authFeature
+package kinomaxi.feature.auth
 
 import android.content.Context
 import androidx.datastore.core.DataStore

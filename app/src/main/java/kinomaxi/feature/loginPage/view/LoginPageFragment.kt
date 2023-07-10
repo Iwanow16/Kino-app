@@ -56,7 +56,7 @@ class LoginPageFragment : DialogFragment(R.layout.fragment_login_page) {
             }
             is LoginPageViewState.Success -> {
                 viewBinding.errorText.visibility = View.INVISIBLE
-                router.exit()
+                dialog?.dismiss()
             }
         }
     }

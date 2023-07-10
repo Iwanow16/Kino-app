@@ -1,6 +1,5 @@
-package kinomaxi.feature.movieList.domain
+package kinomaxi.feature.auth
 
-import kinomaxi.feature.authFeature.AuthDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -10,5 +9,5 @@ class IsAuthenticatedUseCase @Inject constructor(
 ) {
     operator fun invoke(): Flow<Boolean> =
         dataStoreRepository.sessionPreferencesFlow
-            .map { it.isNullOrEmpty() }
+            .map { !it.isNullOrEmpty() }
 }
