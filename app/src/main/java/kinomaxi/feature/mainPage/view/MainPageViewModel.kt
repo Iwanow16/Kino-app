@@ -3,15 +3,18 @@ package kinomaxi.feature.mainPage.view
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kinomaxi.feature.movieList.domain.GetMoviesListUseCase
 import kinomaxi.feature.auth.IsAuthenticatedUseCase
+import kinomaxi.feature.movieList.data.MovieRepository
+import kinomaxi.feature.movieList.model.MoviesList
 import kinomaxi.feature.movieList.model.MoviesListType
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -19,11 +22,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainPageViewModel @Inject constructor(
-    private val getMoviesList: GetMoviesListUseCase,
-    isAuthenticationUseCase: IsAuthenticatedUseCase
+    isAuthenticationUseCase: IsAuthenticatedUseCase,
+    private val movieRepository: MovieRepository
 ) : ViewModel() {
 
     val isUserAuthenticated: Flow<Boolean> = isAuthenticationUseCase()
+
+    private var job: Job? = null
 
     private var _viewState = MutableStateFlow<MainPageState>(MainPageState.Loading)
     val viewState: Flow<MainPageState> =
@@ -36,16 +41,19 @@ class MainPageViewModel @Inject constructor(
 
     fun refreshData() {
         _viewState.value = MainPageState.Loading
+        job?.cancel()
         loadData()
     }
 
     private fun loadData() {
         val getTopRatedMovies =
-            viewModelScope.async { getMoviesList(MoviesListType.TOP_RATED_MOVIES) }
-        val getPopularMovies = viewModelScope.async { getMoviesList(MoviesListType.POPULAR_MOVIES) }
+            viewModelScope.async { movieRepository.getSearchResultStream(MoviesListType.TOP_RATED_MOVIES) }
+        val getPopularMovies =
+            viewModelScope.async { movieRepository.getSearchResultStream(MoviesListType.POPULAR_MOVIES) }
         val getUpcomingMovies =
-            viewModelScope.async { getMoviesList(MoviesListType.UPCOMING_MOVIES) }
-        viewModelScope.launch {
+            viewModelScope.async { movieRepository.getSearchResultStream(MoviesListType.UPCOMING_MOVIES) }
+
+        job = viewModelScope.launch {
             try {
                 val (topRatedMovies, popularMovies, upcomingMovies) = listOf(
                     getTopRatedMovies,
@@ -53,12 +61,15 @@ class MainPageViewModel @Inject constructor(
                     getUpcomingMovies
                 ).awaitAll()
 
-                val viewData = MainPageData(
-                    topRatedMoviesList = topRatedMovies,
-                    topPopularMoviesList = popularMovies,
-                    topUpcomingMoviesList = upcomingMovies,
-                )
-                _viewState.value = MainPageState.Success(viewData)
+                combine(topRatedMovies, popularMovies, upcomingMovies) { a, b, c ->
+                    MainPageData(
+                        topRatedMoviesList = MoviesList(MoviesListType.TOP_RATED_MOVIES, a),
+                        topPopularMoviesList = MoviesList(MoviesListType.POPULAR_MOVIES, b),
+                        topUpcomingMoviesList = MoviesList(MoviesListType.UPCOMING_MOVIES, c),
+                    )
+                }.collect {
+                    _viewState.value = MainPageState.Success(it)
+                }
             } catch (e: Exception) {
                 _viewState.value = MainPageState.Error
             }

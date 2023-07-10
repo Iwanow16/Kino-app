@@ -74,7 +74,7 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
                 banners.map(Banner::toViewData) + favoriteMovies.map(Movie::toViewData)
             moviesListView.isVisible = favoriteMovies.isNotEmpty()
             emptyDataView.isVisible = favoriteMovies.isEmpty()
-            (moviesListView.adapter as? MoviesListAdapter)?.submitList(items)
+            //(moviesListView.adapter as? MoviesListAdapter)?.submitData(lifecycle, items)
         }
     }
 }

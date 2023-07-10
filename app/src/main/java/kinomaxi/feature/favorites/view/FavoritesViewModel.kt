@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val favoriteMoviesRepository: FavoriteMoviesRepository,
+    favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
 
     /** Список баннеров */

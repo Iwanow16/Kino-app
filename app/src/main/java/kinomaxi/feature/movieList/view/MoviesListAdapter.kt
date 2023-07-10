@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.updateLayoutParams
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import kinomaxi.R
 import kinomaxi.databinding.ItemBannerBinding
@@ -17,7 +17,7 @@ import kinomaxi.databinding.ItemMovieBinding
 class MoviesListAdapter (
     private val onMovieClick: (movieId: Long) -> Unit,
     private val isFavoritesList: Boolean = false,
-    ) : ListAdapter<MovieListItem, RecyclerView.ViewHolder>(DiffCallback()) {
+) : PagingDataAdapter<MovieListItem, RecyclerView.ViewHolder>(DiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
@@ -28,12 +28,12 @@ class MoviesListAdapter (
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when(holder) {
-            is BannerViewHolder -> holder.setData(currentList[position] as MovieListItem.Banner)
-            is MovieViewHolder -> holder.setData(currentList[position] as MovieListItem.Movie)
+            is BannerViewHolder -> holder.setData(getItem(position) as MovieListItem.Banner)
+            is MovieViewHolder -> holder.setData(getItem(position) as MovieListItem.Movie)
         }
     }
 
-    override fun getItemViewType(position: Int) = when (currentList[position]) {
+    override fun getItemViewType(position: Int) = when (getItem(position)) {
         is MovieListItem.Movie -> R.layout.item_movie
         is MovieListItem.Banner -> R.layout.item_banner
         else -> throw IllegalStateException("Unknown view")
@@ -72,3 +72,4 @@ private class DiffCallback : DiffUtil.ItemCallback<MovieListItem>() {
     override fun areContentsTheSame(oldItem: MovieListItem, newItem: MovieListItem) =
         oldItem == newItem
 }
+

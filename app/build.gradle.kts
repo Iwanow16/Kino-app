@@ -50,6 +50,8 @@ android {
 }
 
 dependencies {
+    implementation("androidx.paging:paging-runtime:3.1.1")
+
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
     implementation("com.github.kirich1409:viewbindingpropertydelegate-noreflection:1.5.9")
