@@ -1,10 +1,13 @@
 package kinomaxi.feature.favorites.data
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import kinomaxi.feature.movieList.model.FavoriteMovie
+import kinomaxi.feature.movieList.model.Movie
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -32,6 +35,12 @@ interface FavoriteMovieDao {
      * Получить список избранных фильмов
      */
     @Query("SELECT * FROM favorite_movies")
-    fun getFavoriteMovies(): Flow<List<FavoriteMovie>>
+    fun getFavoriteMovies(): PagingSource<Int, FavoriteMovie>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(movies: List<FavoriteMovie>)
+
+    @Query("DELETE FROM favorite_movies")
+    suspend fun clearRepos()
 
 }

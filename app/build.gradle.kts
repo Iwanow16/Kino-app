@@ -51,6 +51,7 @@ android {
 
 dependencies {
     implementation("androidx.paging:paging-runtime:3.1.1")
+    implementation ("androidx.room:room-paging:2.5.2")
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
