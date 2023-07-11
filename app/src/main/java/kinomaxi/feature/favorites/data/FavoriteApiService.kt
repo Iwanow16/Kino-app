@@ -6,6 +6,6 @@ import retrofit2.http.Query
 
 interface FavoriteApiService {
 
-    @GET("account/20099803/favorite/movies")
+    @GET("account/account_id/favorite/movies")
     suspend fun getFavoriteList(@Query("page") page: Int): RestMoviesListResponse
 }

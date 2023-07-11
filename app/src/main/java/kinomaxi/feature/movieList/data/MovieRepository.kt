@@ -16,7 +16,7 @@ class MovieRepository @Inject constructor(
     private val apiService: MoviesListApiService
 ) {
 
-    fun getSearchResultStream(listType: MoviesListType): Flow<PagingData<Movie>> {
+    fun getMovieListFlow(listType: MoviesListType): Flow<PagingData<Movie>> {
         return Pager(
             config = PagingConfig(
                 pageSize = NETWORK_PAGE_SIZE,

@@ -47,13 +47,13 @@ class MainPageViewModel @Inject constructor(
 
     private fun loadData() {
         val getTopRatedMovies =
-            viewModelScope.async { movieRepository.getSearchResultStream(MoviesListType.TOP_RATED_MOVIES) }
+            viewModelScope.async { movieRepository.getMovieListFlow(MoviesListType.TOP_RATED_MOVIES) }
         val getPopularMovies =
-            viewModelScope.async { movieRepository.getSearchResultStream(MoviesListType.POPULAR_MOVIES) }
+            viewModelScope.async { movieRepository.getMovieListFlow(MoviesListType.POPULAR_MOVIES) }
         val getUpcomingMovies =
-            viewModelScope.async { movieRepository.getSearchResultStream(MoviesListType.UPCOMING_MOVIES) }
+            viewModelScope.async { movieRepository.getMovieListFlow(MoviesListType.UPCOMING_MOVIES) }
 
-        job = viewModelScope.launch {
+        viewModelScope.launch {
             try {
                 val (topRatedMovies, popularMovies, upcomingMovies) = listOf(
                     getTopRatedMovies,

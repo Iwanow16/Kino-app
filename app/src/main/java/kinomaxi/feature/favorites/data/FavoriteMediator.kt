@@ -10,7 +10,6 @@ import kinomaxi.feature.database.AppDatabase
 import kinomaxi.feature.movieList.data.RestMovie
 import kinomaxi.feature.movieList.data.RestMoviesListResponse
 import kinomaxi.feature.movieList.model.FavoriteMovie
-import kinomaxi.feature.movieList.model.Movie
 import kinomaxi.feature.movieList.model.RemoteKeys
 import retrofit2.HttpException
 import java.io.IOException
@@ -56,7 +55,7 @@ class FavoriteMediator(
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
                     database.remoteKeysDao().clearRemoteKeys()
-                    //database.favoriteMovieDao().clearRepos()
+                    database.favoriteMovieDao().clearRepos()
                 }
                 val prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1
                 val nextKey = if (endOfPaginationReached) null else page + 1

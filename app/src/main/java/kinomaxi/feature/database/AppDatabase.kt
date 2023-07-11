@@ -1,6 +1,5 @@
 package kinomaxi.feature.database
 
-import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import kinomaxi.feature.favorites.data.FavoriteMovieDao
