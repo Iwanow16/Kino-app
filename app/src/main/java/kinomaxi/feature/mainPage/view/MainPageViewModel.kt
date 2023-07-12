@@ -53,7 +53,7 @@ class MainPageViewModel @Inject constructor(
         val getUpcomingMovies =
             viewModelScope.async { movieRepository.getMovieListFlow(MoviesListType.UPCOMING_MOVIES) }
 
-        viewModelScope.launch {
+        job = viewModelScope.launch {
             try {
                 val (topRatedMovies, popularMovies, upcomingMovies) = listOf(
                     getTopRatedMovies,

@@ -73,8 +73,9 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
     private fun showItems(favoriteMovies: PagingData<FavoriteMovie>) {
         with(viewBinding) {
             val items: PagingData<MovieListItem> = favoriteMovies.map(FavoriteMovie::toViewData)
-            moviesListView.isVisible = true //favoriteMovies.isNotEmpty()
-            emptyDataView.isVisible = false //favoriteMovies.isEmpty()
+            val pagingDataEmpty: Boolean = PagingData.empty<MovieListItem>() == items
+            moviesListView.isVisible = !pagingDataEmpty
+            emptyDataView.isVisible = pagingDataEmpty
             (moviesListView.adapter as? MoviesListAdapter)?.submitData(lifecycle, items)
         }
     }

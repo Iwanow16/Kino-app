@@ -2,6 +2,7 @@ package kinomaxi.feature.accountDetails.view
 
 import android.os.Bundle
 import android.view.View
+import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,6 +15,7 @@ import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentAccountDetailsBinding
+import kinomaxi.feature.accountDetails.AccountDetails
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -68,7 +70,15 @@ class AccountDetailsFragment : Fragment(R.layout.fragment_account_details) {
                     .load(state.accountDetails.avatar.avatarPath)
                     .centerCrop()
                     .into(accountImageLayout.accountImage)
+
+                viewBinding.composeView.apply {
+                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+                    setContent {
+                        AccountDetails(accountDetails = state.accountDetails)
+                    }
+                }
             }
         }
     }
 }
+
