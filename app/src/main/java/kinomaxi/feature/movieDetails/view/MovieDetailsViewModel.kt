@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
-import kinomaxi.feature.movieDetails.domain.FavoriteMovieUseCase
+import kinomaxi.feature.movieDetails.domain.SetFavoriteMovieUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieDetailsUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
 import kinomaxi.feature.movieDetails.domain.IsMovieFavoriteUseCase
@@ -31,7 +31,7 @@ class MovieDetailsViewModel @Inject constructor(
     private val getMovieDetailsById: GetMovieDetailsUseCase,
     private val getMovieImagesById: GetMovieImagesUseCase,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
-    private val addFavoriteMovieUseCase: FavoriteMovieUseCase,
+    private val addFavoriteMovieUseCase: SetFavoriteMovieUseCase,
     isMovieFavoriteFlow: IsMovieFavoriteUseCase,
 ) : ViewModel() {
 

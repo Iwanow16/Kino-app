@@ -60,7 +60,7 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.favoriteMovies.collect {
-                    showItems(it, viewModel.banners)
+                    showItems(it)
                 }
             }
         }
@@ -70,10 +70,9 @@ class FavoritesFragment : Fragment(R.layout.fragment_favorites) {
         router.navigateTo(DetailsScreen(movieId))
     }
 
-    private fun showItems(favoriteMovies: PagingData<FavoriteMovie>, banners: List<Banner>) {
+    private fun showItems(favoriteMovies: PagingData<FavoriteMovie>) {
         with(viewBinding) {
             val items: PagingData<MovieListItem> = favoriteMovies.map(FavoriteMovie::toViewData)
-                //banners.map(Banner::toViewData) + favoriteMovies.map(Movie::toViewData)
             moviesListView.isVisible = true //favoriteMovies.isNotEmpty()
             emptyDataView.isVisible = false //favoriteMovies.isEmpty()
             (moviesListView.adapter as? MoviesListAdapter)?.submitData(lifecycle, items)

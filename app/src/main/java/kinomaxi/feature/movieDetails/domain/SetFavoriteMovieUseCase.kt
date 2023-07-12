@@ -4,7 +4,7 @@ import kinomaxi.feature.movieDetails.data.FavoriteType
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import javax.inject.Inject
 
-class FavoriteMovieUseCase @Inject constructor(
+class SetFavoriteMovieUseCase @Inject constructor(
     private val apiService: MovieDetailsApiService,
 ){
     suspend operator fun invoke(movieId: Long, favorite: Boolean) {

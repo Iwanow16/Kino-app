@@ -6,15 +6,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import kinomaxi.feature.database.AppDatabase
-import kinomaxi.feature.movieList.data.MovieRepository
-import kinomaxi.feature.movieList.domain.GetMoviePageUseCase
 import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
-import kinomaxi.feature.movieList.model.MoviesListType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 /**
@@ -38,19 +34,6 @@ class FavoriteMoviesRepository @Inject constructor(
         ).flow
             .cachedIn(CoroutineScope(Dispatchers.IO))
     }
-
-    /**
-     * Cписок избранных фильмов
-     */
-/*    val favoriteMovies: Flow<List<Movie>> = favoriteMovieDao.getFavoriteMovies().map {
-        it.map { FavoriteMovie ->
-            Movie(
-                FavoriteMovie.id,
-                FavoriteMovie.title,
-                FavoriteMovie.posterUrl
-            )
-        }
-    }*/
 
     /**
      * Получить признак наличия фильма с идентификатором [movieId] в списке избранных фильмов
