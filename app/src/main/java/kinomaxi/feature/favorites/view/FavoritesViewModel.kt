@@ -1,16 +1,18 @@
 package kinomaxi.feature.favorites.view
 
 import androidx.lifecycle.ViewModel
+import androidx.paging.PagingData
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
 import kinomaxi.feature.movieList.model.Banner
+import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val favoriteMoviesRepository: FavoriteMoviesRepository,
+    favoriteMoviesRepository: FavoriteMoviesRepository,
 ) : ViewModel() {
 
     /** Список баннеров */
@@ -20,5 +22,5 @@ class FavoritesViewModel @Inject constructor(
         )
 
     /** Список избранных фильмов */
-    val favoriteMovies: Flow<List<Movie>> = favoriteMoviesRepository.favoriteMovies
+    val favoriteMovies: Flow<PagingData<FavoriteMovie>> = favoriteMoviesRepository.getFavoriteMovies()
 }

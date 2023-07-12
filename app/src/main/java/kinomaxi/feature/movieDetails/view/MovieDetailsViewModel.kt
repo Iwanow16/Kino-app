@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.favorites.data.FavoriteMoviesRepository
+import kinomaxi.feature.movieDetails.domain.SetFavoriteMovieUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieDetailsUseCase
 import kinomaxi.feature.movieDetails.domain.GetMovieImagesUseCase
 import kinomaxi.feature.movieDetails.domain.IsMovieFavoriteUseCase
@@ -29,8 +30,9 @@ class MovieDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getMovieDetailsById: GetMovieDetailsUseCase,
     private val getMovieImagesById: GetMovieImagesUseCase,
-    isMovieFavoriteFlow: IsMovieFavoriteUseCase,
     private val favoriteMoviesRepository: FavoriteMoviesRepository,
+    private val addFavoriteMovieUseCase: SetFavoriteMovieUseCase,
+    isMovieFavoriteFlow: IsMovieFavoriteUseCase,
 ) : ViewModel() {
 
     private val movieId: Long = requireNotNull(savedStateHandle[MOVIE_ID_ARG_KEY])
@@ -83,8 +85,10 @@ class MovieDetailsViewModel @Inject constructor(
         val viewData = viewState.data
         viewModelScope.launch {
             if (isFavoriteState.value) {
+                addFavoriteMovieUseCase.invoke(movieId, false)
                 favoriteMoviesRepository.removeFromFavorites(viewData.movieDetails.toMovie())
             } else {
+                addFavoriteMovieUseCase.invoke(movieId, true)
                 favoriteMoviesRepository.addToFavorites(viewData.movieDetails.toMovie())
             }
         }

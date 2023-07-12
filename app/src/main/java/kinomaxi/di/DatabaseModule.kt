@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kinomaxi.feature.favorites.data.AppDatabase
+import kinomaxi.feature.database.AppDatabase
 import kinomaxi.feature.favorites.data.FavoriteMovieDao
 import javax.inject.Singleton
 

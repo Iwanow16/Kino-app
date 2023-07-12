@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.paging.map
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
@@ -108,8 +109,8 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
     private fun LayoutMoviesListBinding.showMoviesList(moviesList: MoviesList) {
         moviesListTitle.setText(moviesList.type.titleResId)
-        (moviesListSlider.adapter as? MoviesListAdapter)?.submitList(
-            moviesList.movies.map(Movie::toViewData)
+        (moviesListSlider.adapter as? MoviesListAdapter)?.submitData(lifecycle,
+            moviesList.movies.map { movie: Movie -> movie.toViewData() }
         )
     }
 }
@@ -122,5 +123,5 @@ private val MoviesListType.titleResId: Int
         MoviesListType.UPCOMING_MOVIES -> R.string.top_upcoming_title
     }
 
-private fun Movie.toViewData() =
+private fun Movie.toViewData(): MovieListItem =
     MovieListItem.Movie(id, posterUrl)
