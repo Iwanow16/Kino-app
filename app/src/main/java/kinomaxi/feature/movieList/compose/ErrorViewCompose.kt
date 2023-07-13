@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import kinomaxi.R
 
 @Composable
-fun ErrorViewCompose() {
+fun ErrorViewCompose(refresh: () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -46,7 +46,7 @@ fun ErrorViewCompose() {
                 .padding(16.dp)
         )
         Button(
-            onClick = {  },
+            onClick = { refresh() },
             border = BorderStroke(1.dp, Color.Black),
             colors = ButtonDefaults.outlinedButtonColors()
         )

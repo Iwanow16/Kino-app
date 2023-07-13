@@ -11,18 +11,49 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import kinomaxi.R
 import kinomaxi.feature.accountDetails.model.AccountDetails
+import kinomaxi.feature.accountDetails.view.AccountDetailsViewModel
+import kinomaxi.feature.accountDetails.view.AccountDetailsViewState
+import kinomaxi.feature.movieList.compose.ErrorViewCompose
+import kinomaxi.feature.movieList.compose.LoaderViewCompose
+
+@Composable
+fun AccountDetailsPageCompose(
+    accountViewModel: AccountDetailsViewModel = viewModel()
+) {
+    val state by accountViewModel.viewState.collectAsState()
+
+    when (state) {
+        AccountDetailsViewState.Error ->
+            ErrorViewCompose { accountViewModel.refreshData() }
+
+        AccountDetailsViewState.Loading ->
+            LoaderViewCompose()
+
+        is AccountDetailsViewState.Success -> AccountDetailsLayout(
+            (state as AccountDetailsViewState.Success).accountDetails
+        ) { accountViewModel.removeSession() }
+    }
+}
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun AccountDetailsViewCompose(accountDetails: AccountDetails) {
+fun AccountDetailsLayout(
+    accountDetails: AccountDetails,
+    removeSession: () -> Unit
+) {
     Column {
         Row {
             GlideImage(
@@ -41,16 +72,19 @@ fun AccountDetailsViewCompose(accountDetails: AccountDetails) {
             ) {
                 Text(
                     text = accountDetails.username,
-                    style = MaterialTheme.typography.headlineMedium
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                 )
                 Row {
                     Text(
-                        text = "Страна: ",
-                        style = MaterialTheme.typography.bodyLarge
+                        text = stringResource(id = R.string.account_country_description),
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                     )
                     Text(
                         text = accountDetails.country,
-                        style = MaterialTheme.typography.bodyLarge
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.surfaceVariant,
                     )
                 }
             }
@@ -59,8 +93,10 @@ fun AccountDetailsViewCompose(accountDetails: AccountDetails) {
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            Button(onClick = { }) {
-                Text(text = "Удалить сессию")
+            Button(onClick = { removeSession() }) {
+                Text(
+                    text = stringResource(id = R.string.account_remove_session_button),
+                )
             }
         }
     }

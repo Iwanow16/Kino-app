@@ -13,12 +13,9 @@ import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.Screens.DetailsScreen
+import kinomaxi.Screens.FavoriteScreen
 import kinomaxi.databinding.FragmentMainPageBinding
-import kinomaxi.feature.movieList.compose.ErrorViewCompose
-import kinomaxi.feature.movieList.compose.LoaderViewCompose
-import kinomaxi.feature.movieList.compose.MovieMainListsCompose
-import kinomaxi.feature.movieList.model.Movie
-import kinomaxi.feature.movieList.view.MovieListItem
+import kinomaxi.feature.movieList.compose.MainPageCompose
 import kinomaxi.setSubtitle
 import kinomaxi.setTitle
 import kotlinx.coroutines.launch
@@ -36,27 +33,12 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
 
     private val menuProvider by lazy { MainPageMenuProvider(router, childFragmentManager) }
 
+    private val onMovieClick = { movieId: Long -> router.navigateTo(DetailsScreen(movieId)) }
+    private val onFavoriteClick = { router.navigateTo(FavoriteScreen()) }
+    private val onRefreshClick = { viewModel.refreshData() }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        /*
-                with(viewBinding) {
-                    favoritesButton.setOnClickListener {
-                        router.navigateTo(FavoriteScreen())
-                    }
-                    errorView.setOnInflateListener { _, inflated ->
-                        with(LayoutErrorViewBinding.bind(inflated)) {
-                            errorActionButton.setOnClickListener {
-                                viewModel.refreshData()
-                            }
-                        }
-                    }
-
-                    topRatedMoviesList.moviesListSlider.adapter = MoviesListAdapter(::onMovieClick)
-                    topPopularMoviesList.moviesListSlider.adapter = MoviesListAdapter(::onMovieClick)
-                    topUpcomingMoviesList.moviesListSlider.adapter = MoviesListAdapter(::onMovieClick)
-                }
-        */
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -64,37 +46,18 @@ class MainPageFragment : Fragment(R.layout.fragment_main_page) {
                 launch { viewModel.isUserAuthenticated.collect(menuProvider::updateMenu) }
             }
         }
-
         requireActivity().addMenuProvider(menuProvider, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    private fun onMovieClick(movieId: Long) {
-        router.navigateTo(DetailsScreen(movieId))
-    }
-
     private fun showNewState(state: MainPageState) {
+        setTitle(getString(R.string.app_name))
+        setSubtitle(null)
+
         with(viewBinding.composeView) {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                when (state) {
-                    MainPageState.Loading -> {
-                        LoaderViewCompose()
-                    }
-
-                    MainPageState.Error -> {
-                        ErrorViewCompose()
-                    }
-
-                    is MainPageState.Success -> {
-                        setTitle(getString(R.string.app_name))
-                        setSubtitle(null)
-                        MovieMainListsCompose(state.data)
-                    }
-                }
+                MainPageCompose(state, onMovieClick, onFavoriteClick, onRefreshClick)
             }
         }
     }
 }
-
-private fun Movie.toViewData(): MovieListItem =
-    MovieListItem.Movie(id, posterUrl)
