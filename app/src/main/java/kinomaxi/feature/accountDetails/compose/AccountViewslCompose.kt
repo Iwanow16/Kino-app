@@ -1,11 +1,11 @@
-package kinomaxi.feature.accountDetails
+package kinomaxi.feature.accountDetails.compose
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absolutePadding
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -20,10 +20,9 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import kinomaxi.feature.accountDetails.model.AccountDetails
 
-
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun AccountDetails(accountDetails: AccountDetails) {
+fun AccountDetailsViewCompose(accountDetails: AccountDetails) {
     Column {
         Row {
             GlideImage(
@@ -33,10 +32,10 @@ fun AccountDetails(accountDetails: AccountDetails) {
                 contentDescription = "Account image",
                 modifier = Modifier
                     .absolutePadding(16.dp, 16.dp)
+                    .fillMaxWidth(0.35f)
+                    .aspectRatio(1f)
                     .clip(RoundedCornerShape(25.dp))
-                    .size(160.dp)
             )
-
             Column(
                 Modifier.absolutePadding(8.dp, 16.dp, 16.dp, 8.dp)
             ) {

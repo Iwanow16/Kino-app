@@ -55,6 +55,8 @@ android {
 }
 
 dependencies {
+    implementation("androidx.paging:paging-compose:3.2.0-rc01")
+
     implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.1")
 
     val composeBom = platform("androidx.compose:compose-bom:2023.05.01")

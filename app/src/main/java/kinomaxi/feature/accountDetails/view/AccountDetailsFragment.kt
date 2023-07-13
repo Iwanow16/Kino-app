@@ -3,19 +3,19 @@ package kinomaxi.feature.accountDetails.view
 import android.os.Bundle
 import android.view.View
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import by.kirich1409.viewbindingdelegate.viewBinding
-import com.bumptech.glide.Glide
 import com.github.terrakok.cicerone.Router
 import dagger.hilt.android.AndroidEntryPoint
 import kinomaxi.R
 import kinomaxi.databinding.FragmentAccountDetailsBinding
-import kinomaxi.feature.accountDetails.AccountDetails
+import kinomaxi.feature.accountDetails.compose.AccountDetailsViewCompose
+import kinomaxi.feature.movieList.compose.ErrorViewCompose
+import kinomaxi.feature.movieList.compose.LoaderViewCompose
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -39,42 +39,26 @@ class AccountDetailsFragment : Fragment(R.layout.fragment_account_details) {
             }
         }
 
-        viewBinding.removeSessionButton.setOnClickListener {
+ /*       viewBinding.removeSessionButton.setOnClickListener {
             viewModel.removeSession()
-        }
+        }*/
     }
 
     private fun showNewState(state: AccountDetailsViewState) {
-        when (state) {
-            AccountDetailsViewState.Loading -> with(viewBinding) {
-                contentAccountView.isVisible = false
-                loaderView.show()
-                errorView.isVisible = false
-            }
+        with(viewBinding.composeView) {
+            setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
+            setContent {
+                when (state) {
+                    AccountDetailsViewState.Loading -> {
+                        LoaderViewCompose()
+                    }
 
-            AccountDetailsViewState.Error -> with(viewBinding) {
-                contentAccountView.isVisible = false
-                loaderView.hide()
-                errorView.isVisible = true
-            }
+                    AccountDetailsViewState.Error -> {
+                        ErrorViewCompose()
+                    }
 
-            is AccountDetailsViewState.Success -> with(viewBinding) {
-                contentAccountView.isVisible = true
-                loaderView.hide()
-                errorView.isVisible = false
-
-                accountDetailsLayout.username.text = state.accountDetails.username
-                accountDetailsLayout.country.text = state.accountDetails.country
-
-                Glide.with(this@AccountDetailsFragment)
-                    .load(state.accountDetails.avatar.avatarPath)
-                    .centerCrop()
-                    .into(accountImageLayout.accountImage)
-
-                viewBinding.composeView.apply {
-                    setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
-                    setContent {
-                        AccountDetails(accountDetails = state.accountDetails)
+                    is AccountDetailsViewState.Success -> {
+                        AccountDetailsViewCompose(accountDetails = state.accountDetails)
                     }
                 }
             }
