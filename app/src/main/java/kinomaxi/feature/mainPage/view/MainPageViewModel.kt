@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -53,7 +52,7 @@ class MainPageViewModel @Inject constructor(
         val getUpcomingMovies =
             viewModelScope.async { movieRepository.getMovieListFlow(MoviesListType.UPCOMING_MOVIES) }
 
-        viewModelScope.launch {
+        job = viewModelScope.launch {
             try {
                 val (topRatedMovies, popularMovies, upcomingMovies) = listOf(
                     getTopRatedMovies,
@@ -61,15 +60,21 @@ class MainPageViewModel @Inject constructor(
                     getUpcomingMovies
                 ).awaitAll()
 
-                combine(topRatedMovies, popularMovies, upcomingMovies) { a, b, c ->
-                    MainPageData(
-                        topRatedMoviesList = MoviesList(MoviesListType.TOP_RATED_MOVIES, a),
-                        topPopularMoviesList = MoviesList(MoviesListType.POPULAR_MOVIES, b),
-                        topUpcomingMoviesList = MoviesList(MoviesListType.UPCOMING_MOVIES, c),
-                    )
-                }.collect {
-                    _viewState.value = MainPageState.Success(it)
-                }
+                val viewData = MainPageData(
+                    topRatedMoviesList = MoviesList(
+                        MoviesListType.TOP_RATED_MOVIES,
+                        topRatedMovies
+                    ),
+                    topPopularMoviesList = MoviesList(
+                        MoviesListType.POPULAR_MOVIES,
+                        popularMovies
+                    ),
+                    topUpcomingMoviesList = MoviesList(
+                        MoviesListType.UPCOMING_MOVIES,
+                        upcomingMovies
+                    ),
+                )
+                _viewState.value = MainPageState.Success(viewData)
             } catch (e: Exception) {
                 _viewState.value = MainPageState.Error
             }

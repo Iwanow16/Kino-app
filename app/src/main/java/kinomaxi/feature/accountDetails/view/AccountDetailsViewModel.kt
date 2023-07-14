@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kinomaxi.feature.accountDetails.domain.DeleteSessionUseCase
 import kinomaxi.feature.accountDetails.domain.GetAccountDetailsUseCase
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.onSubscription
 import kotlinx.coroutines.flow.stateIn
@@ -20,9 +20,8 @@ class AccountDetailsViewModel @Inject constructor(
     private val deleteSessionUseCase: DeleteSessionUseCase,
 ) : ViewModel() {
 
-    private var _viewState =
-        MutableStateFlow<AccountDetailsViewState>(AccountDetailsViewState.Loading)
-    val viewState: Flow<AccountDetailsViewState> = _viewState.asStateFlow()
+    private var _viewState = MutableStateFlow<AccountDetailsViewState>(AccountDetailsViewState.Loading)
+    val viewState: StateFlow<AccountDetailsViewState> = _viewState.asStateFlow()
         .onSubscription { loadData() }
         .stateIn(
             viewModelScope,
