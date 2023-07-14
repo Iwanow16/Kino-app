@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import kinomaxi.feature.accountDetails.data.AccountDetailsApiServers
 import kinomaxi.feature.accountDetails.data.ClientSessionInterceptor
 import kinomaxi.feature.accountDetails.data.SessionExpiredInterceptor
+import kinomaxi.feature.backgroundWork.data.ConfigurationApiService
 import kinomaxi.feature.favorites.data.FavoriteApiService
 import kinomaxi.feature.loginPage.data.LoginApiService
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
@@ -87,5 +88,11 @@ class NetworkModule {
     @Singleton
     fun provideFavoriteListApiService(retrofit: Retrofit): FavoriteApiService {
         return retrofit.create(FavoriteApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideConfigurationApiService(retrofit: Retrofit): ConfigurationApiService {
+        return retrofit.create(ConfigurationApiService::class.java)
     }
 }
