@@ -1,11 +1,12 @@
 package kinomaxi.feature.movieDetails.domain
 
-import kinomaxi.AppConfig
+import kinomaxi.feature.backgroundWork.data.ConfDataStore
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.data.RestMovieDetails
 import kinomaxi.feature.movieDetails.data.RestMovieGenre
 import kinomaxi.feature.movieDetails.model.MovieDetails
 import kinomaxi.feature.movieDetails.model.MovieImage
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ import javax.inject.Inject
  */
 class GetMovieDetailsUseCase @Inject constructor(
     private val apiService: MovieDetailsApiService,
+    private val dataStore: ConfDataStore
 ) {
     /**
      * Получить детальную информацию о фильме по идентификатору [movieId]
@@ -21,19 +23,24 @@ class GetMovieDetailsUseCase @Inject constructor(
     suspend operator fun invoke(
         movieId: Long,
     ): MovieDetails {
-        return apiService.getMovieDetails(movieId).toEntity()
+        val baseUrl: String? = dataStore.baseUrlConfigurationFlow.first()
+        val posterPreviewSize: String? = dataStore.posterSizeConfigurationFlow.first()
+        return apiService.getMovieDetails(movieId).toEntity(baseUrl, posterPreviewSize)
     }
 }
 
-private fun RestMovieDetails.toEntity() =
+private fun RestMovieDetails.toEntity(
+    baseUrl: String?,
+    posterPreviewSize: String?
+) =
         MovieDetails(
             id = id,
             imdbId = imdbId,
             title = title,
             originalTitle = originalTitle,
             posterImage = MovieImage(
-                imageUrl = "${AppConfig.IMAGE_BASE_URL}original$posterPath",
-                previewUrl = "${AppConfig.IMAGE_BASE_URL}${AppConfig.POSTER_PREVIEW_SIZE}$posterPath",
+                imageUrl = "${baseUrl}original$posterPath",
+                previewUrl = "${baseUrl}${posterPreviewSize}$posterPath",
             ),
             overview = overview,
             tagline = tagline,

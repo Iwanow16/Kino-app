@@ -3,6 +3,7 @@ package kinomaxi.feature.favorites.data
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import kinomaxi.feature.backgroundWork.data.ConfDataStore
 import kinomaxi.feature.database.AppDatabase
 import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.Movie
@@ -16,7 +17,8 @@ import javax.inject.Inject
 class FavoriteMoviesRepository @Inject constructor(
     private val database: AppDatabase,
     private val apiService: FavoriteApiService,
-    private val favoriteMovieDao: FavoriteMovieDao
+    private val favoriteMovieDao: FavoriteMovieDao,
+    private val dataStore: ConfDataStore
 ) {
     @OptIn(ExperimentalPagingApi::class)
     fun getFavoriteMovies(): Pager<Int, FavoriteMovie> {
@@ -25,7 +27,7 @@ class FavoriteMoviesRepository @Inject constructor(
                 pageSize = 20,
                 enablePlaceholders = false
             ),
-            remoteMediator = FavoriteMediator(apiService, database),
+            remoteMediator = FavoriteMediator(apiService, database, dataStore),
             pagingSourceFactory = { favoriteMovieDao.getFavoriteMovies() }
         )
     }

@@ -5,12 +5,12 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import kinomaxi.AppConfig
+import kinomaxi.feature.backgroundWork.data.ConfDataStore
 import kinomaxi.feature.database.AppDatabase
-import kinomaxi.feature.movieList.data.RestMovie
 import kinomaxi.feature.movieList.data.RestMoviesListResponse
 import kinomaxi.feature.movieList.model.FavoriteMovie
 import kinomaxi.feature.movieList.model.RemoteKeys
+import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
 import java.io.IOException
 
@@ -19,7 +19,8 @@ private const val STARTING_PAGE_INDEX = 1
 @OptIn(ExperimentalPagingApi::class)
 class FavoriteMediator(
     private val apiService: FavoriteApiService,
-    private val database: AppDatabase
+    private val database: AppDatabase,
+    private val dataStore: ConfDataStore
 ) : RemoteMediator<Int, FavoriteMovie>() {
 
     override suspend fun load(
@@ -31,17 +32,21 @@ class FavoriteMediator(
                 val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
                 remoteKeys?.nextKey?.minus(1) ?: STARTING_PAGE_INDEX
             }
+
             LoadType.PREPEND -> {
                 val remoteKeys = getRemoteKeyForFirstItem(state)
                 remoteKeys?.prevKey ?: return MediatorResult.Success(endOfPaginationReached = true)
             }
+
             LoadType.APPEND -> {
                 val remoteKeys = getRemoteKeyForLastItem(state)
                 remoteKeys?.nextKey ?: return MediatorResult.Success(endOfPaginationReached = true)
             }
         }
         try {
-            val response = apiService.getFavoriteList(page).toEntity()
+            val baseUrl: String? = dataStore.baseUrlConfigurationFlow.first()
+            val posterPreviewSize: String? = dataStore.posterSizeConfigurationFlow.first()
+            val response = apiService.getFavoriteList(page).toEntity(baseUrl, posterPreviewSize)
 
             val endOfPaginationReached = response.isEmpty()
             database.withTransaction {
@@ -64,6 +69,7 @@ class FavoriteMediator(
             return MediatorResult.Error(exception)
         }
     }
+
     private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, FavoriteMovie>): RemoteKeys? {
         return state.pages.lastOrNull() { it.data.isNotEmpty() }?.data?.lastOrNull()
             ?.let { movie ->
@@ -89,11 +95,14 @@ class FavoriteMediator(
     }
 }
 
-private fun RestMoviesListResponse.toEntity(): List<FavoriteMovie> =
-    movies.map(RestMovie::toEntity)
-
-private fun RestMovie.toEntity(): FavoriteMovie = FavoriteMovie(
-    id = id,
-    title = title,
-    posterUrl = "${AppConfig.IMAGE_BASE_URL}${AppConfig.POSTER_PREVIEW_SIZE}$posterPath",
-)
+private fun RestMoviesListResponse.toEntity(
+    baseUrl: String?,
+    posterPreviewSize: String?
+): List<FavoriteMovie> =
+    movies.map { movie ->
+        FavoriteMovie(
+            id = movie.id,
+            title = movie.title,
+            posterUrl = "${baseUrl}${posterPreviewSize}${movie.posterPath}"
+        )
+    }

@@ -1,9 +1,10 @@
 package kinomaxi.feature.movieDetails.domain
 
-import kinomaxi.AppConfig
+import kinomaxi.feature.backgroundWork.data.ConfDataStore
 import kinomaxi.feature.movieDetails.data.MovieDetailsApiService
 import kinomaxi.feature.movieDetails.data.RestMovieImagesResponse
 import kinomaxi.feature.movieDetails.model.MovieImage
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 /**
@@ -11,6 +12,7 @@ import javax.inject.Inject
  */
 class GetMovieImagesUseCase @Inject constructor(
     private val apiService: MovieDetailsApiService,
+    private val dataStore: ConfDataStore
 ) {
 
     /**
@@ -19,13 +21,18 @@ class GetMovieImagesUseCase @Inject constructor(
     suspend operator fun invoke(
         movieId: Long,
     ): List<MovieImage> {
-        return apiService.getMovieImages(movieId).toImages()
+        val baseUrl: String? = dataStore.baseUrlConfigurationFlow.first()
+        val backdropPreviewSize: String? = dataStore.backdropSizeConfigurationFlow.first()
+        return apiService.getMovieImages(movieId).toImages(baseUrl, backdropPreviewSize)
     }
 }
 
-private fun RestMovieImagesResponse.toImages() = backdrops.map { backdrop ->
+private fun RestMovieImagesResponse.toImages(
+    baseUrl: String?,
+    backdropPreviewSize: String?
+) = backdrops.map { backdrop ->
     MovieImage(
-        imageUrl = "${AppConfig.IMAGE_BASE_URL}original${backdrop.path}",
-        previewUrl = "${AppConfig.IMAGE_BASE_URL}${AppConfig.BACKDROP_PREVIEW_SIZE}${backdrop.path}",
+        imageUrl = "${baseUrl}original${backdrop.path}",
+        previewUrl = "${baseUrl}${backdropPreviewSize}${backdrop.path}",
     )
 }

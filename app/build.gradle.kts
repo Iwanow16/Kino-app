@@ -55,6 +55,10 @@ android {
 }
 
 dependencies {
+    implementation ("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+
     implementation("androidx.paging:paging-compose:3.2.0-rc01")
 
     implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.1")
