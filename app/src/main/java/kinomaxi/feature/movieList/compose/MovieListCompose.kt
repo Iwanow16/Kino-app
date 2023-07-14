@@ -5,14 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,8 +45,7 @@ fun MainPageCompose(
     onFavoriteClick: () -> Unit,
     onRefreshClick: () -> Unit
 ) {
-    AppTheme(
-    ) {
+    AppTheme {
         Box(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -141,26 +137,9 @@ fun MovieListCompose(movies: MoviesList, onMovieClick: (movieId: Long) -> Unit) 
                 val movieCard = lazyPagingItems[index]
                 if (movieCard != null) {
                     MovieCardCompose(movie = movieCard, onMovieClick)
-                } else {
-                    LoaderViewCompose()
                 }
             }
         }
-    }
-}
-
-@Composable
-fun MovieFavoriteListCompose() {
-    val gridState = rememberLazyGridState()
-
-    LazyVerticalGrid(
-        state = gridState,
-        columns = GridCells.Fixed(2),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        //items(10) { MovieCardCompose() }
     }
 }
 
@@ -170,10 +149,10 @@ fun MovieCardCompose(movie: Movie, onMovieClick: (movieId: Long) -> Unit) {
     GlideImage(
         model = movie.posterUrl,
         alignment = Alignment.Center,
-        contentScale = ContentScale.FillHeight,
+        contentScale = ContentScale.Crop,
         contentDescription = "movie poster",
         modifier = Modifier
-            .size(160.dp, 240.dp)
+            .aspectRatio(1/1.5f)
             .clip(RoundedCornerShape(8.dp))
             .clickable { onMovieClick(movie.id) }
     )

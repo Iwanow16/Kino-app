@@ -62,7 +62,7 @@ fun AccountDetailsLayout(
                 alignment = Alignment.Center,
                 contentDescription = "Account image",
                 modifier = Modifier
-                    .absolutePadding(16.dp, 16.dp)
+                    .absolutePadding(left = 16.dp, top = 16.dp)
                     .fillMaxWidth(0.35f)
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(25.dp))
@@ -73,18 +73,18 @@ fun AccountDetailsLayout(
                 Text(
                     text = accountDetails.username,
                     style = MaterialTheme.typography.headlineMedium,
-                    color = MaterialTheme.colorScheme.surfaceVariant,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 Row {
                     Text(
                         text = stringResource(id = R.string.account_country_description),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                     Text(
                         text = accountDetails.country,
                         style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.surfaceVariant,
+                        color = MaterialTheme.colorScheme.onSurface,
                     )
                 }
             }
